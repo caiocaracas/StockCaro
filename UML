@@ -1,0 +1,47 @@
+@startuml
+
+abstract class Usuario{
+ - Nome: str
+ - email: str
+ - senha: str
+}
+
+class Morador{
+ - ListaPessoal: ListaPessoal 
+}
+
+class Administrador{}
+
+Usuario <|-- Morador
+Usuario <|-- Administrador
+
+
+abstract class ProdutoBase{}
+
+class ProdutoGeral{}
+
+class ProdutoPessoal{}
+
+ProdutoBase <|-- ProdutoGeral
+ProdutoBase <|-- ProdutoPessoal
+
+abstract class ListadeCompras{}
+
+class ListaGeral{}
+
+class ListaPessoal{}
+
+ListadeCompras <|-- ListaGeral
+ListadeCompras <|-- ListaPessoal
+
+class Residencia{
+ - dispensa: Dispensa
+}
+
+class Dispensa{}
+
+Administrador <-- Residencia
+Morador <-- Residencia
+Dispensa <--- Residencia
+
+@enduml
