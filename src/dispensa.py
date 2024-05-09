@@ -1,78 +1,43 @@
-from typing import Dict
+from interfaces import *
 
-class Dispensa:
-  """
-  Classe que representa uma dispensa de produtos.
+class Dispensa(Dispensa):
+  def __init__(self, residencia: type[Residencia]) -> None:
+    self._residencia = residencia
+    self._estoque = {}
+    self._produtos = []
   
-  Atributos:
-    _estoque (dict): Um dicionário que mapeia o ID do produto para a quantidade em estoque.
-    
-  Métodos:
-    estoque() -> Dict[int, int]: Retorna o estoque atual.
-    adicionar_produto(produto, quantidade: int) -> None: Adiciona um produto ao estoque.
-    remover_produto(produto, quantidade: int) -> None: Remove um produto do estoque.
-  """
-  def __init__(self) -> None:
-    """
-    Inicializa a dispensa com um estoque vazio.
-    """
-    self._estoque: Dict[int, int] = {}
-
   @property
   def estoque(self) -> Dict[int, int]:
-    """
-    Retorna o estoque atual.
-    
-    Returns:
-      Dict[int, int]: Um dicionário representando o estoque atual.
-    """
     return self._estoque
-
-  def adicionar_produto(self, produto, quantidade: int) -> None:
-    """
-    Adiciona um produto ao estoque.
-
-    Args:
-      produto: O produto a ser adicionado.
-      quantidade (int): A quantidade do produto a ser adicionada.
-      
-    Raises:
-      TypeError: Se o produto não for instância da Classe ou das sublcasses de ProdutoBase.
-      ValueError se a quantidade for menor que 0
-    """
-    if not hasattr(produto, "id"):
-      raise TypeError("Produto Inválido")
-    
+  
+  @property
+  def produtos(self) -> List[Type["Produto"]]:
+    return self._produtos
+  
+  def adicionar_produto(self, produto: type[Produto], quantidade: int) -> None:
     if quantidade < 0:
-      raise ValueError("Quantidade de produtos Inválida")
+      raise ValueError("Quantidade deve ser maio que 0")
     
-    if produto.id in self._estoque:
-      self._estoque[produto.id] += quantidade
-    else:
-      self._estoque[produto.id] = quantidade
+    self._produtos.append(produto)
+    self._estoque[produto.id] = quantidade
 
-  def remover_produto(self, produto, quantidade: int) -> None:
-    """
-    Remove um produto do estoque.
-
-    Args:
-      produto: O produto a ser removido.
-      quantidade (int): A quantidade do produto a ser removida.
-      
-    Raises:
-      TypeError: Se o produto não for instância da Classe ou das sublcasses de ProdutoBase.
-      ValueError: Se a quantidade removida for maior que a quantidade em estoque ou se o produto não estiver no estoque.
-    """
-    if not hasattr(produto, "id"):
-      raise TypeError("Produto Inválido")
+  def remover_produto(self, produto: type[Produto], quantidade: int) -> None:
+    if quantidade < 0:
+      raise ValueError("Quantidade precisa ser positiva")
     
-    if produto.id in self._estoque:
-      if self._estoque[produto.id] >= quantidade: 
-        self._estoque[produto.id] -= quantidade
-        
-        if self._estoque[produto.id] == 0:
+    if produto in self._produtos:
+      match quantidade:
+        case q if q == 0:
           del self._estoque[produto.id]
-      else:
-        raise ValueError("Quantidade insuficiente na dispensa.")    
+          del self._produtos[produto]
+        case q if q > self._lista[produto.id]:
+          self._estoque[produto.id] -= quantidade
+        case q if q == self._estoque[produto.id]:
+          del self._estoque[produto.id]
+          del self._produtos[produto]
+        case q if q < self._lista[produto.id]:
+          raise ValueError("Quantidade a ser removida Indisponível")
+        case _:
+          raise ValueError("Valor inserido em Quantidade Inválido")
     else:
-      raise ValueError("O produto não está na dispensa.")
+      raise ValueError("Produto não encontrado")

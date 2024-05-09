@@ -1,185 +1,43 @@
-from typing import Dict
-from abc import ABC, abstractmethod
+from typing import Dict, Type
+from interfaces import *
+from src.interfaces import Dispensa, Produto
 
-class ListadeCompras(ABC):
-  """
-  Classe abstrata que define uma lista de compras.
-
-  Métodos abstratos:
-    adicionar_produto(produto, quantidade: int) -> None: Adiciona um produto à lista.
-    remover_produto(produto) -> None: Remove um produto da lista.
-    listar_produtos() -> Dict[int, int]: Lista os produtos na lista.
-  """
-  def __init__(self) -> None:
-    """
-    Inicializa a lista de produtos como um dicionário vazio.
-    """
-    super().__init__()
-    self._lista_de_produtos: Dict[int, int] = {}
-
-  @abstractmethod
-  def adicionar_produto(self, produto, quantidade: int) -> None:
-    pass
-
-  @abstractmethod
-  def remover_produto(self, produto) -> None:
-    pass
-
-  @abstractmethod
-  def listar_produtos(self) -> Dict[int, int]:
-    pass
-
-
-class ListaGeral(ListadeCompras):
-  """
-  Classe que representa uma lista de compras geral.
-
-  Atributos:
-    residencia: A residência associada à lista.
-
-  Métodos:
-    adicionar_produto(produto, quantidade: int) -> None: Adiciona um produto à lista geral.
-    remover_produto(produto, quantidade: int = None) -> None: Remove um produto da lista geral.
-    listar_produtos() -> Dict[int, int]: Lista os produtos na lista geral.
-  """
-  def __init__(self, residencia) -> None:
-    """
-    Inicializa a lista de compras geral.
-
-    Args:
-      residencia: A residência associada à lista.
-    """
-    super().__init__()
-    self._residencia = residencia
-  
-  def adicionar_produto(self, produto, quantidade: int) -> None:
-    """
-    Adiciona um produto à lista geral.
-
-    Args:
-      produto: O produto a ser adicionado.
-      quantidade (int): A quantidade do produto a ser adicionada.
-    """
-    if produto.id in self._lista_de_produtos:
-      self._lista_de_produtos[produto.id] += quantidade
-    else:
-      self._lista_de_produtos[produto.id] = quantidade
-    
-  @property
-  def residencia(self):
-    """
-    Retorna a residência associada à lista.
-
-    Returns:
-      A residência associada à lista.
-    """
-    return self._residencia
-
-  def remover_produto(self, produto, quantidade: int = None) -> None:
-    """
-    Remove um produto da lista geral.
-
-    Args:
-      produto: O produto a ser removido.
-      quantidade (int, opcional): A quantidade do produto a ser removida. Se não especificada, remove o produto completamente.
-    
-    Raises:
-      ValueError: Se o produto não estiver na lista.
-    """
-    if produto.id in self._lista_de_produtos:
-      if quantidade:
-        self._lista_de_produtos[produto.id] -= abs(quantidade)
-      else:
-        del self._lista_de_produtos[produto.id]
-    else:
-      raise ValueError("O produto não está na lista.")
-
-  def listar_produtos(self) -> Dict[int, int]:
-    """
-    Lista os produtos na lista geral.
-
-    Returns:
-      Um dicionário representando os produtos na lista geral, onde as chaves são os IDs dos produtos e os valores são as quantidades.
-    """
-    return self._lista_de_produtos
-
-
-class ListaPessoal(ListadeCompras):
-  """
-  Classe que representa uma lista de compras pessoal.
-
-  Atributos:
-    morador: O usuário associado à lista.
-
-  Métodos:
-    adicionar_produto(produto, quantidade: int) -> None: Adiciona um produto à lista pessoal.
-    remover_produto(produto, quantidade: int = None) -> None: Remove um produto da lista pessoal.
-    listar_produtos() -> Dict[int, int]: Lista os produtos na lista pessoal.
-  """
-  def __init__(self, usuario) -> None:
-    """
-    Inicializa a lista de compras pessoal.
-
-    Args:
-      usuario: O usuário associado à lista.
-    """
-    super().__init__()
+class ListaPessoal(Lista):
+  def __init__(self, usuario: Type["Usuario"]) -> None:
+    self._lista: Dict[int, int] = {}
+    self._produtos = []
     self._usuario = usuario
 
-  def adicionar_produto(self, produto, quantidade: int) -> None:
-    """
-    Adiciona um produto à lista pessoal.
-
-    Args:
-      produto: O produto a ser adicionado.
-      quantidade (int): A quantidade do produto a ser adicionada.
-    
-    Raises:
-      ValueError: Se a quantidade for negativa.
-    """
+  def adicionar_produto(self, novo_produto: Type["Produto"], quantidade: int) -> None:
     if quantidade < 0:
-      raise ValueError("Quantidade precisa ser maior que 0")
+      raise ValueError("Quantidade precisa ser positiva")
     
-    if produto.id in self._lista_de_produtos:
-      self._lista_de_produtos[produto.id] += quantidade
-    else:
-      self._lista_de_produtos[produto.id] = quantidade
+    self._produtos.append(novo_produto)
+    self._lista[novo_produto.id] = quantidade
 
-  def remover_produto(self, produto, quantidade: int = None) -> None:
-    """
-    Remove um produto da lista pessoal.
-
-    Args:
-      produto: O produto a ser removido.
-      quantidade (int, opcional): A quantidade do produto a ser removida. Se não especificada, remove o produto completamente.
+  def remover_produto(self, produto: Type["Produto"], quantidade: int = 0) -> None:
+    if quantidade < 0:
+      raise ValueError("Quantidade precisa ser positiva")
     
-    Raises:
-      ValueError: Se o produto não estiver na lista.
-    """
-    if produto.id in self._lista_de_produtos:
-      
-      if quantidade:
-        self._lista_de_produtos[produto.id] -= abs(quantidade)
-      else:
-        del self._lista_de_produtos[produto.id]
+    if produto in self._produtos:
+      match quantidade:
+        case q if q == 0:
+          del self._lista[produto.id]
+          del self._produtos[produto]
+        case q if q > self._lista[produto.id]:
+          self._lista[produto.id] -= quantidade
+        case q if q == self._lista[produto.id]:
+          del self._lista[produto.id]
+          del self._produtos[produto]
+        case q if q < self._lista[produto.id]:
+          raise ValueError("Quantidade a ser removida Indisponível")
+        case _:
+          raise ValueError("Valor inserido em Quantidade Inválido")
     else:
-      raise ValueError("O produto não está na lista.")
+      raise ValueError("Produto não encontrado")
 
-  def listar_produtos(self) -> Dict[int, int]:
-    """
-    Lista os produtos na lista pessoal.
+  def obter_lista(self, dispensa: Type["Dispensa"]) -> Dict[str, int]:
+    pass
 
-    Returns:
-      Um dicionário representando os produtos na lista pessoal, onde as chaves são os IDs dos produtos e os valores são as quantidades.
-    """
-    return self._lista_de_produtos
-
-  @property
-  def morador(self):
-    """
-    Retorna o usuário associado à lista.
-
-    Returns:
-      O usuário associado à lista.
-    """
-    return self._usuario
+  def valor_compra(self) -> float:
+    pass

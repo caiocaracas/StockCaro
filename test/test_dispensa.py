@@ -1,6 +1,6 @@
-from dispensa import Dispensa
-from produto import ProdutoGeral, ProdutoPessoal
-from usuario import Morador
+from src.dispensa import Dispensa
+from src.produto import ProdutoGeral, ProdutoPessoal
+from src.usuario import Morador
 
 import unittest
 
