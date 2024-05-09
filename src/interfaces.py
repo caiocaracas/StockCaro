@@ -66,6 +66,10 @@ class Lista(ABC):
   @abstractmethod
   def __init__(self) -> None:
     pass
+  
+  @abstractmethod
+  def __str__(self) -> str:
+    pass
 
   @abstractmethod
   def adicionar_produto(self, novo_produto: Type["Produto"], quantidade: int) -> None:
@@ -76,7 +80,7 @@ class Lista(ABC):
     pass
   
   @abstractmethod
-  def obter_lista(self, dispensa: Type["Dispensa"]) -> Dict[str, int]:
+  def obter_lista(self, dispensa: Type["Dispensa"]) -> Dict[int, int]:
     pass
 
   @abstractmethod
