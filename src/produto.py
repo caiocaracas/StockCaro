@@ -1,4 +1,5 @@
-from interfaces import *
+from interfaces import List, Type
+from interfaces import Produto, Usuario, Residencia
 
 """
   Implementação de Produto Pessoal

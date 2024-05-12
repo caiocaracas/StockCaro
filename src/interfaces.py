@@ -127,6 +127,15 @@ class Usuario(ABC):
     pass
 
   @abstractmethod
+  @senha.setter
+  def senha(self, nova_senha: str) -> None:
+    pass
+  
+  @abstractmethod
+  def autenticar(self, email: str, senha: str) -> bool:
+    pass
+
+  @abstractmethod
   def alterar_senha(self, nova_senha: str) -> None:
     pass
 

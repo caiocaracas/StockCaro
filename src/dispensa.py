@@ -1,4 +1,5 @@
-from interfaces import *
+from interfaces import Dict, Type, List
+from interfaces import Dispensa, Residencia, Produto
 
 class Dispensa(Dispensa):
   def __init__(self, residencia: type[Residencia]) -> None:
