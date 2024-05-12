@@ -1,28 +1,46 @@
-from interfaces import *
+from interfaces import List, Type
+from interfaces import Residencia, Usuario, Produto, Lista, Dispensa
+from lista import ListaGeral
 
 class Residencia(Residencia):
-  def __init__(self) -> None:
-    pass
-
-  def __str__(self) -> str:
-    pass
+  def __init__(self, admin: Type["Usuario"]) -> None:
+    self._administrador = admin
+    self._lista_geral = ListaGeral(self)
+    self._dispensa = Dispensa(self)
 
   @property
   def administrador(self) -> Type["Usuario"]:
-    pass
+    return self._administrador
 
   @property
   def moradores(self) -> List[Type["Usuario"]]:
-    pass
+    return self._moradores
+  
+  @property
+  def lista_geral(self) -> Type["Lista"]:
+    return self._lista_geral
+  
+  @property
+  def dispensa(self) -> Type["Dispensa"]:
+    return self._dispensa
 
   def adicionar_morador(self, novo_morador: Type["Usuario"]) -> None:
-    pass
+    if novo_morador not in self.moradores:
+      self._moradores.append(novo_morador)
 
   def remover_morador(self, morador: Type["Usuario"]) -> None:
-    pass
+    if morador in self.moradores:
+      del self._moradores[morador]
   
   def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    pass
+    self._dispensa.adicionar_produto(produto, quantidade)
 
   def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    pass
+    self._dispensa.remover_produto(produto, quantidade)
+  
+  def adicionar_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
+    self._lista_geral.adicionar_produto(produto, quantidade)
+
+  def remover_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
+    self._lista_geral.remover_produto(produto, quantidade)
+  

@@ -207,10 +207,6 @@ class Residencia(ABC):
     pass
 
   @abstractmethod
-  def __str__(self) -> str:
-    pass
-
-  @abstractmethod
   @property
   def administrador(self) -> Type["Usuario"]:
     pass
@@ -218,6 +214,16 @@ class Residencia(ABC):
   @abstractmethod
   @property
   def moradores(self) -> List[Type["Usuario"]]:
+    pass
+
+  @abstractmethod
+  @property
+  def lista_geral(self) -> Type["Lista"]:
+    pass
+
+  @abstractmethod  
+  @property
+  def dispensa(self) -> Type["Dispensa"]:
     pass
 
   @abstractmethod
@@ -234,4 +240,12 @@ class Residencia(ABC):
 
   @abstractmethod
   def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+    pass
+
+  @abstractmethod
+  def adicionar_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
+    pass
+
+  @abstractmethod
+  def remover_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
     pass
