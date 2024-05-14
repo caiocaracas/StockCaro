@@ -1,6 +1,6 @@
-from interfaces import Dict, Type
-from interfaces import Usuario, Produto, Residencia
-from lista import ListaPessoal
+from src.interfaces import Dict, Type
+from src.interfaces import Usuario, Produto, Residencia
+from src.lista import ListaPessoal
 
 class UsuarioComum(Usuario):
 
@@ -24,9 +24,17 @@ class UsuarioComum(Usuario):
     return self.nome == usuario.nome and self.email == usuario.email
   
   @property
+  def id(self) -> int:
+    return self._id
+  
+  @property
   def nome(self) -> str:
     return self._nome
 
+  @property
+  def lista(self) -> Type["ListaPessoal"]:
+    return self._lista
+  
   @property
   def email(self) -> str:
     return self._email

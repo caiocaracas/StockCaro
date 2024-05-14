@@ -1,6 +1,6 @@
-from interfaces import List, Type
-from interfaces import Residencia, Usuario, Produto, Lista, Dispensa
-from lista import ListaGeral
+from src.interfaces import List, Type
+from src.interfaces import Residencia, Usuario, Produto, Lista, Dispensa
+from src.lista import ListaGeral
 
 class Residencia(Residencia):
   def __init__(self, admin: Type["Usuario"]) -> None:

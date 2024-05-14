@@ -1,37 +1,45 @@
-from interfaces import Dict, Type
-from interfaces import Lista, Usuario, Produto, Dispensa, Residencia
+from src.interfaces import Dict, Type
+from src.interfaces import Lista, Usuario, Produto, Dispensa, Residencia
 
 class ListaPessoal(Lista):
   def __init__(self, usuario: Type["Usuario"]) -> None:
     self._lista: Dict[int, int] = {}
     self._produtos = []
     self._usuario = usuario
+  
+  def __str__(self) -> str:
+    string = "Produtos presentes na lista:\n"
+    for produto in self._produtos:
+      string += str(produto) + "\n"
+    return string
 
   def adicionar_produto(self, novo_produto: Type["Produto"], quantidade: int) -> None:
     if quantidade < 0:
       raise ValueError("Quantidade precisa ser positiva")
     
-    self._produtos.append(novo_produto)
-    self._lista[novo_produto.id] = quantidade
+    novo_produto.adicionar_usuario(self._usuario)
+    
+    if novo_produto.id in self._lista:
+      self._lista[novo_produto.id] += quantidade
+    else:
+      self._produtos.append(novo_produto)
+      self._lista[novo_produto.id] = quantidade
 
-  def remover_produto(self, produto: Type["Produto"], quantidade: int = 0) -> None:
+  def remover_produto(self, produto: Type["Produto"], quantidade: int) -> None:
     if quantidade < 0:
       raise ValueError("Quantidade precisa ser positiva")
     
     if produto in self._produtos:
       match quantidade:
-        case q if q == 0:
+        case q if q == 0 or q == self._lista[produto.id]:
+          produto.remover_usuario(self._usuario)
           del self._lista[produto.id]
-          del self._produtos[produto]
+          self._produtos.remove(produto)
 
-        case q if q > self._lista[produto.id]:
-          self._lista[produto.id] -= quantidade
-        
-        case q if q == self._lista[produto.id]:
-          del self._lista[produto.id]
-          del self._produtos[produto]
-        
         case q if q < self._lista[produto.id]:
+          self._lista[produto.id] -= quantidade
+      
+        case q if q > self._lista[produto.id]:
           raise ValueError("Quantidade a ser removida Indisponível")
         
         case _:
@@ -74,32 +82,38 @@ class ListaGeral(Lista):
     self._produtos = []
     self._usuarios = residencia.moradores
     self._administrador = residencia.administrador
+  
+  def __str__(self) -> str:
+    string = "Produtos presentes na lista:\n"
+    for produto in self._produtos:
+      string += str(produto) + "\n"
+    return string
 
   def adicionar_produto(self, novo_produto: Type["Produto"], quantidade: int) -> None:
     if quantidade < 0:
       raise ValueError("Quantidade precisa ser positiva")
     
-    self._produtos.append(novo_produto)
-    self._lista[novo_produto.id] = quantidade
+    if novo_produto.id in self._lista:
+      self._lista[novo_produto.id] += quantidade
+    else:
+      self._produtos.append(novo_produto)
+      self._lista[novo_produto.id] = quantidade
 
-  def remover_produto(self, produto: Type["Produto"], quantidade: int = 0) -> None:
+  def remover_produto(self, produto: Type["Produto"], quantidade: int) -> None:
     if quantidade < 0:
       raise ValueError("Quantidade precisa ser positiva")
     
     if produto in self._produtos:
       match quantidade:
-        case q if q == 0:
+        case q if q == 0 or q == self._lista[produto.id]:
+          produto.remover_usuario(self._usuario)
           del self._lista[produto.id]
-          del self._produtos[produto]
+          self._produtos.remove(produto)
 
-        case q if q > self._lista[produto.id]:
-          self._lista[produto.id] -= quantidade
-        
-        case q if q == self._lista[produto.id]:
-          del self._lista[produto.id]
-          del self._produtos[produto]
-        
         case q if q < self._lista[produto.id]:
+          self._lista[produto.id] -= quantidade
+      
+        case q if q > self._lista[produto.id]:
           raise ValueError("Quantidade a ser removida Indisponível")
         
         case _:

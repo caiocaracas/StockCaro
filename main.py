@@ -1,8 +1,9 @@
-from src.usuario import Administrador, Morador
-from src.dispensa import Dispensa
+from src.usuario import UsuarioComum, Administrador
 from src.lista import ListaGeral, ListaPessoal
 from src.produto import ProdutoGeral, ProdutoPessoal
+from src.dispensa import Dispensa
 from src.residencia import Residencia
+
 
 def main():
   pass

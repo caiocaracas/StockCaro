@@ -20,32 +20,26 @@ class Produto(ABC):
     pass
 
   @abstractmethod
-  @property
   def nome_produto(self) -> str:
     pass
 
   @abstractmethod
-  @nome_produto.setter
   def nome_produto(self, novo_nome: str) -> None:
     pass
 
   @abstractmethod
-  @property
   def id(self) -> int:
     pass
   
   @abstractmethod
-  @property
   def preco(self) -> float:
     pass
 
   @abstractmethod
-  @preco.setter
   def preco(self, novo_preco: float) -> None:
     pass
 
   @abstractmethod
-  @property
   def pertence(self) -> List[Type["Usuario"]]:
     pass
 
@@ -107,27 +101,30 @@ class Usuario(ABC):
     pass
   
   @abstractmethod
-  @property
+  def id(self) -> int:
+    pass
+
+  @abstractmethod
   def nome(self) -> str:
     pass
 
   @abstractmethod
-  @property
+  def lista(self) -> Type["Lista"]:
+    pass
+
+  @abstractmethod
   def email(self) -> str:
     pass
 
   @abstractmethod
-  @email.setter
   def email(self, novo_email: str) -> None:
     pass
 
   @abstractmethod
-  @property
   def senha(self) -> str:
     pass
 
   @abstractmethod
-  @senha.setter
   def senha(self, nova_senha: str) -> None:
     pass
   
@@ -148,7 +145,6 @@ class Usuario(ABC):
     pass
   
   @abstractmethod
-  @property
   def dividas(self) -> Dict[str, float]:
     pass
 
@@ -179,12 +175,10 @@ class Dispensa(ABC):
     pass
 
   @abstractmethod
-  @property
   def estoque(self) -> Dict[int, int]:
     pass
 
   @abstractmethod
-  @property
   def produtos(self) -> List[Type["Produto"]]:
     pass
 
@@ -207,22 +201,18 @@ class Residencia(ABC):
     pass
 
   @abstractmethod
-  @property
   def administrador(self) -> Type["Usuario"]:
     pass
 
   @abstractmethod
-  @property
   def moradores(self) -> List[Type["Usuario"]]:
     pass
 
   @abstractmethod
-  @property
   def lista_geral(self) -> Type["Lista"]:
     pass
 
   @abstractmethod  
-  @property
   def dispensa(self) -> Type["Dispensa"]:
     pass
 

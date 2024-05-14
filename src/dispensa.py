@@ -1,7 +1,7 @@
-from interfaces import Dict, Type, List
-from interfaces import Dispensa, Residencia, Produto
+from src.interfaces import Dict, Type, List
+from src.interfaces import Dispensa, Residencia, Produto
 
-class Dispensa:
+class Dispensa(Dispensa):
   def __init__(self, residencia: Type[Residencia]) -> None:
     self._residencia = residencia
     self._estoque: Dict[int, int] = {}
