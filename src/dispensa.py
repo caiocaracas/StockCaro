@@ -7,6 +7,13 @@ class Dispensa(Dispensa):
     self._estoque: Dict[int, int] = {}
     self._produtos: List[Type[Produto]] = []
 
+  def __str__(self) -> str:
+    string = "Produtos presentes na Dispensa:\n"
+    for produto in self._produtos:
+      quantidade = self._estoque[produto.id]
+      string += f"{quantidade} x {str(produto)}\n"
+    return string
+
   @property
   def estoque(self) -> Dict[int, int]:
     return self._estoque

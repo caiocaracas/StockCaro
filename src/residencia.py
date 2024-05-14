@@ -1,12 +1,14 @@
 from src.interfaces import List, Type
 from src.interfaces import Residencia, Usuario, Produto, Lista, Dispensa
 from src.lista import ListaGeral
+from src.dispensa import Dispensa
 
 class Residencia(Residencia):
   def __init__(self, admin: Type["Usuario"]) -> None:
     self._administrador = admin
     self._lista_geral = ListaGeral(self)
     self._dispensa = Dispensa(self)
+    self._moradores: List[Type["Usuario"]] = [admin]
 
   @property
   def administrador(self) -> Type["Usuario"]:
@@ -30,7 +32,7 @@ class Residencia(Residencia):
 
   def remover_morador(self, morador: Type["Usuario"]) -> None:
     if morador in self.moradores:
-      del self._moradores[morador]
+      self._moradores.remove(morador)
   
   def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
     self._dispensa.adicionar_produto(produto, quantidade)

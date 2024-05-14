@@ -80,7 +80,7 @@ class ListaGeral(Lista):
   def __init__(self, residencia: Type["Residencia"]) -> None:
     self._lista: Dict[int, int] = {}
     self._produtos = []
-    self._usuarios = residencia.moradores
+    self._residencia = residencia
     self._administrador = residencia.administrador
   
   def __str__(self) -> str:

@@ -104,13 +104,13 @@ class Administrador(UsuarioComum):
     return self._residencia
   
   def adicionar_produto_geral(self, produto: Produto, quantidade: int) -> None:
-    pass
+    self._residencia.adicionar_produto_lista_geral(produto=produto, quantidade=quantidade)
 
   def remover_produto_geral(self, produto: Produto, quantidade: int) -> None:
-    pass
+    self._residencia.remover_produto_lista_geral(produto=produto, quantidade=quantidade)
 
   def adicionar_morador(self, morador: UsuarioComum) -> None:
-    pass
+    self._residencia.adicionar_morador(novo_morador=morador)
 
   def remover_morador(self, morador: UsuarioComum) -> None:
-    pass
+    self._residencia.remover_morador(morador=morador)
