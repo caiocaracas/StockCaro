@@ -1,13 +1,13 @@
 from src.dispensa import Dispensa
 from src.produto import ProdutoGeral, ProdutoPessoal
-from src.usuario import Morador
+from src.usuario import UsuarioComum
 
 import unittest
 
 class TestDispensa(unittest.TestCase):
   def setUp(self) -> None:
     self.dispensa = Dispensa()
-    self.morador = Morador("Arthur", "arthur@email.com", "1234")
+    self.morador = UsuarioComum("Arthur", "arthur@email.com", "1234")
         
     self.produto1 = ProdutoGeral("Arroz", "Alimento", 25.99)
     self.produto2 = ProdutoGeral("Feijão", "Alimento", 9.99)

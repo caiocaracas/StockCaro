@@ -129,6 +129,18 @@ class Usuario(ABC):
     pass
   
   @abstractmethod
+  def dispensa(self) -> Type["Dispensa"]:
+    pass
+
+  @abstractmethod
+  def residencia(self) -> Type["Residencia"]:
+    pass
+  
+  @abstractmethod
+  def residencia(self, residencia: Type["Residencia"]) -> None:
+    pass
+  
+  @abstractmethod
   def autenticar(self, email: str, senha: str) -> bool:
     pass
 

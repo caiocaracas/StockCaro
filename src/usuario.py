@@ -1,21 +1,19 @@
 from src.interfaces import Dict, Type
-from src.interfaces import Usuario, Produto, Residencia
+from src.interfaces import Usuario, Produto, Residencia, Dispensa
 from src.lista import ListaPessoal
 
 class UsuarioComum(Usuario):
 
   def __init__(self, nome: str, email: str, senha: str) -> None:
     self._nome = nome
-
-    self._email = None
-    self._senha = None
-    self.email = email
-    self.senha = senha
+    self.email = email  # Passa email para o setter
+    self.senha = senha  # Passa senha para o setter
 
     self._id = Usuario.id_counter
     Usuario.id_counter += 1
 
     self._lista = ListaPessoal(self)
+    self._residencia = None
   
   def __str__(self) -> str:
     return f"User: {self.nome}, Email: {self.email}"
@@ -58,6 +56,18 @@ class UsuarioComum(Usuario):
   def senha(self, nova_senha: str) -> None:
     self._senha = nova_senha
   
+  @property
+  def dispensa(self) -> Type["Dispensa"]:
+    return self._residencia.dispensa
+
+  @property
+  def residencia(self) -> Type["Residencia"]:
+    return self._residencia
+  
+  @residencia.setter
+  def residencia(self, residencia: Type["Residencia"]) -> None:
+    self._residencia = residencia
+  
   def autenticar(self, email: str, senha: str) -> bool:
     return email == self.email and self.senha == senha
   
@@ -73,7 +83,16 @@ class UsuarioComum(Usuario):
   def remover_produto_lista(self, produto: Type["Produto"], quantidade: int) -> None:
     self._lista.remover_produto(produto, quantidade)
   
-  @property
+  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+    if self.residencia == None:
+      raise ValueError("Nenhuma residência cadastrada ao usuário")
+    self._residencia.adicionar_produto_dispensa(produto=produto, quantidade=quantidade)
+
+  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+    if self.residencia == None:
+      raise ValueError("Nenhuma residência cadastrada ao usuário")
+    self._residencia.remover_produto_dispensa(produto=produto, quantidade=quantidade)
+
   def dividas(self) -> Dict[str, float]:
     pass
 
@@ -81,12 +100,6 @@ class UsuarioComum(Usuario):
     pass
 
   def finalizar_compra(self) -> None:
-    pass
-
-  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    pass
-
-  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
     pass
 
 
@@ -98,10 +111,6 @@ class Administrador(UsuarioComum):
   def __init__(self, nome: str, email: str, senha: str, residencia: Type["Residencia"]) -> None:
     super().__init__(nome, email, senha)
     self._residencia = residencia
-  
-  @property
-  def residencia(self) -> Residencia:
-    return self._residencia
   
   def adicionar_produto_geral(self, produto: Produto, quantidade: int) -> None:
     self._residencia.adicionar_produto_lista_geral(produto=produto, quantidade=quantidade)
