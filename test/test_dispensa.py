@@ -1,6 +1,6 @@
-from src.dispensa import Dispensa
-from src.produto import ProdutoGeral, ProdutoPessoal
-from src.usuario import UsuarioComum
+from ..src.dispensa import Dispensa
+from ..src.produto import ProdutoGeral, ProdutoPessoal
+from ..src.usuario import UsuarioComum
 
 import unittest
 

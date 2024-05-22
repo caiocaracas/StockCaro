@@ -65,4 +65,3 @@ class ProdutoGeral(ProdutoPessoal):
     else:
       usuarios = []
     super().__init__(nome_prodto, preco, usuarios)
-
