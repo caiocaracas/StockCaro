@@ -225,6 +225,11 @@ class GUI:
 
 
   def verificar_dividas_screen(self) -> None:
+    tk.Label(self.verificar_dividas_frame, text="Divídas", font=("Haveltica", 16)).place(x=300, y=10)
+
+    self.lista_dividas = tk.Listbox(self.verificar_dividas_frame, width=28, height=15)
+    self.lista_dividas.place(x=225, y=50)
+    
     tk.Button(self.verificar_dividas_frame, text="Confirmar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
 
 
@@ -272,12 +277,12 @@ class GUI:
     tk.Label(self.config_frame, text="Senha Atual").place(x=15, y=180)
     tk.Label(self.config_frame, text="Nova Senha").place(x=15, y=230)
 
-    self.config_senha_atual = tk.Entry(self.config_frame, width=20)
+    self.config_senha_atual = tk.Entry(self.config_frame, width=20, show="*")
     self.config_senha_atual.place(x=120, y=177)
-    self.config_nova_senha = tk.Entry(self.config_frame, width=20)
+    self.config_nova_senha = tk.Entry(self.config_frame, width=20, show="*")
     self.config_nova_senha.place(x=120, y=227)
 
-    tk.Button(self.config_frame, text="Alterar Senha", width=12).place(x=280, y=270)
+    tk.Button(self.config_frame, text="Alterar Senha", width=12, command=self.alterar_senha).place(x=280, y=270)
 
     tk.Button(self.config_frame, text="Confirmar", command=self.frame_anterior, width=15, height=2).place(x=265, y=340)
     
@@ -557,10 +562,21 @@ class GUI:
     print(f"ID: {novo_morador_id}")
 
 
+  def alterar_senha(self) -> None:
+    senha_atual = self.config_senha_atual.get()
+    nova_senha = self.config_nova_senha.get()
+
+    if not senha_atual or not nova_senha:
+      messagebox.showerror("Preencha os campos de senha", "Preencha ambos campos de senha")
+      return None
+
+    if senha_atual == "1234":
+      messagebox.showinfo("Senha Atualizada", f"Senha atualizada para {nova_senha}")
+
 
 if __name__ == "__main__":
   root = tk.Tk()
   interface = GUI(root)
-  interface.show_adicionar_morador()
+  interface.show_verificar_dividas()
 
   root.mainloop()
