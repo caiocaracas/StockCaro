@@ -5,7 +5,6 @@ from typing import Union
 class GUI:
   def __init__(self, master: tk.Tk) -> None:
     self.master = master
-    self.master.resizable(False, False)
     self.master.title("Gerenciador Mercado")
     self.master.geometry("700x400")
 
@@ -131,6 +130,9 @@ class GUI:
     """ Botão de Modfiicar Lista """
     tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, command=self.show_modificar_lista).place(relx=0.75, rely=0.85)
 
+    """ Sair """
+    tk.Button(self.usuario_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
+
 
   def admin_screen(self) -> None:
     self.frame_anterior = self.show_admin
@@ -151,7 +153,7 @@ class GUI:
 
     """ Botão de Modfiicar Lista Pessoal """
     tk.Label(self.admin_frame, text="Lista Geral").place(relx=0.56, rely=0.1)
-    tk.Button(self.admin_frame, text="Modificar Geral", width=15, height=1).place(relx=0.5, rely=0.85)
+    tk.Button(self.admin_frame, text="Modificar Geral", width=15, height=1, command=self.show_modificar_lista).place(relx=0.5, rely=0.85)
 
     """ Lista de Compras Pessoal """
     self.lista_pessoal = tk.Listbox(self.admin_frame, width=18, height=15, bg="light grey", font=("Times new Roman", 10))
@@ -159,7 +161,10 @@ class GUI:
 
     """ Botão de Modfiicar Lista Pessoal """
     tk.Label(self.admin_frame, text="Lista Pessoal").place(relx=0.8, rely=0.1)
-    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1).place(relx=0.75, rely=0.85)
+    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1, command=self.show_modificar_lista).place(relx=0.75, rely=0.85)
+
+    """ Sair """
+    tk.Button(self.admin_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
 
 
   def adicionar_produto_screen(self) -> None:
@@ -577,6 +582,6 @@ class GUI:
 if __name__ == "__main__":
   root = tk.Tk()
   interface = GUI(root)
-  interface.show_verificar_dividas()
+  interface.show_login()
 
   root.mainloop()
