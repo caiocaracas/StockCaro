@@ -122,13 +122,13 @@ class GUI:
     tk.Button(self.usuario_frame, text="Configurações",      width=12, height=4, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=5)
 
     """ Lista de Compras """
-    tk.Label(self.usuario_frame, text="Lista de Compras").place(relx=0.785, rely=0.1)
+    tk.Label(self.usuario_frame, text="Lista de Compras").place(x=525, y=55)
 
-    self.lista = tk.Listbox(self.usuario_frame, width=18, height=15, bg="light grey", font=("Times new Roman", 10))
-    self.lista.place(relx=0.75, rely=0.15)
+    self.lista = tk.Listbox(self.usuario_frame, width=22, height=16, bg="light grey", font=("Times new Roman", 10))
+    self.lista.place(x=505, y=80)
 
     """ Botão de Modfiicar Lista """
-    tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, command=self.show_modificar_lista).place(relx=0.75, rely=0.85)
+    tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, command=self.show_modificar_lista).place(x=500, y=350)
 
     """ Sair """
     tk.Button(self.usuario_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
@@ -148,20 +148,20 @@ class GUI:
     tk.Button(self.admin_frame, text="Configurações",      width=12, height=3, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=4)
 
     """ Lista de Compras Geral """
-    self.lista_geral = tk.Listbox(self.admin_frame, width=18, height=15, bg="light grey", font=("Times new Roman", 10))
-    self.lista_geral.place(relx=0.5, rely=0.15)
+    self.lista_geral = tk.Listbox(self.admin_frame, width=22, height=17, bg="light grey", font=("Times new Roman", 10))
+    self.lista_geral.place(x=350, y=80)
 
     """ Botão de Modfiicar Lista Pessoal """
-    tk.Label(self.admin_frame, text="Lista Geral").place(relx=0.56, rely=0.1)
-    tk.Button(self.admin_frame, text="Modificar Geral", width=15, height=1, command=self.show_modificar_lista).place(relx=0.5, rely=0.85)
+    tk.Label(self.admin_frame, text="Lista Geral").place(x=385, y=55)
+    tk.Button(self.admin_frame, text="Modificar Geral", width=15, height=1, command=self.show_modificar_lista).place(x=345, y=370)
 
     """ Lista de Compras Pessoal """
-    self.lista_pessoal = tk.Listbox(self.admin_frame, width=18, height=15, bg="light grey", font=("Times new Roman", 10))
-    self.lista_pessoal.place(relx=0.75, rely=0.15)
+    self.lista_pessoal = tk.Listbox(self.admin_frame, width=22, height=17, bg="light grey", font=("Times new Roman", 10))
+    self.lista_pessoal.place(x=530, y=80)
 
     """ Botão de Modfiicar Lista Pessoal """
-    tk.Label(self.admin_frame, text="Lista Pessoal").place(relx=0.8, rely=0.1)
-    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1, command=self.show_modificar_lista).place(relx=0.75, rely=0.85)
+    tk.Label(self.admin_frame, text="Lista Pessoal").place(x=565, y=55)
+    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1, command=self.show_modificar_lista).place(x=525, y=370)
 
     """ Sair """
     tk.Button(self.admin_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
