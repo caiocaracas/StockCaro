@@ -1,4 +1,6 @@
 @startuml
+!theme carbon-gray
+
 
 abstract class Usuario{
  - Nome: str
