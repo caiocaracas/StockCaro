@@ -7,6 +7,7 @@ class GUI:
     self.master = master
     self.master.title("Gerenciador Mercado")
     self.master.geometry("700x400")
+    self.master.resizable(False, False)
 
     self.frames = []
     self.frame_anterior = None
@@ -241,6 +242,9 @@ class GUI:
   def verificar_dispensa_screen(self) -> None:
     tk.Label(self.verificar_dispensa_frame, text="Dispensa", font=("Haveltica", 16)).place(x=300, y=10)
 
+    self.lista_dispensa = tk.Listbox(self.verificar_dispensa_frame, width=28, height=15)
+    self.lista_dispensa.place(x=225, y=50)
+
     tk.Button(self.verificar_dispensa_frame, text="Retornar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
 
 
@@ -438,6 +442,7 @@ class GUI:
       return None
     
     self.user = username
+    
     if username == "Arthur" and password == "1234":
       self.show_usuario()
     elif username == "Admin" and password == "admin":
@@ -583,5 +588,5 @@ if __name__ == "__main__":
   root = tk.Tk()
   interface = GUI(root)
   interface.show_login()
-
+  
   root.mainloop()
