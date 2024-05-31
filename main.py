@@ -1,8 +1,8 @@
-from src.usuario import UsuarioComum, Administrador
-from src.lista import ListaGeral, ListaPessoal
-from src.produto import ProdutoGeral, ProdutoPessoal
-from src.dispensa import Dispensa
-from src.residencia import Residencia
+from scripts.usuario import UsuarioComum, Administrador
+from scripts.lista import ListaGeral, ListaPessoal
+from scripts.produto import ProdutoGeral, ProdutoPessoal
+from scripts.dispensa import Dispensa
+from scripts.residencia import Residencia
 
 
 def main():
