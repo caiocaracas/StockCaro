@@ -4,41 +4,33 @@ from typing import Dict, List, Type
 """
  Implementação Interface Produto
 """
-class Produto(ABC):
+class ProdutoInterface(ABC):
   @abstractmethod
-  def __init__(self, nome_prodto: str, id_produto: int, preco: float, usuarios: List[int]) -> None:
+  def get_nome_produto(cls, id: int) -> str:
     pass
 
   @abstractmethod
-  def nome_produto(self) -> str:
-    pass
-
-  @abstractmethod
-  def nome_produto(self, novo_nome: str) -> None:
-    pass
-
-  @abstractmethod
-  def id(self) -> int:
+  def set_nome_produto(cls, id: int, novo_nome: str) -> None:
     pass
   
   @abstractmethod
-  def preco(self) -> float:
+  def get_preco(cls, id: int) -> float:
     pass
 
   @abstractmethod
-  def preco(self, novo_preco: float) -> None:
+  def set_preco(cls, id: int, novo_preco: float) -> None:
     pass
 
   @abstractmethod
-  def pertence(self) -> List[int]:
+  def pertence(cls, id: int) -> List[int]:
     pass
 
   @abstractmethod
-  def adicionar_usuario(self, novo_usuario: int) -> None:
+  def adicionar_usuario(cls, id: int, novo_usuario: int) -> None:
     pass
 
   @abstractmethod
-  def remover_usuario(self, usuario: int) -> None:
+  def remover_usuario(cls, id: int, usuario: int) -> None:
     pass
 
 
@@ -46,36 +38,28 @@ class Produto(ABC):
   Implementação Interface Lista
 """
 
-class Lista(ABC):
+class ListaInterface(ABC):
   @abstractmethod
-  def __init__(self) -> None:
+  def adicionar_produto(cls, id: int, novo_produto_id: int, quantidade: int) -> None:
+    pass
+
+  @abstractmethod
+  def remover_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
   
   @abstractmethod
-  def __str__(self) -> str:
+  def obter_lista(cls, id: int, dispensa_id: int) -> Dict[int, int]:
     pass
 
   @abstractmethod
-  def adicionar_produto(self, novo_produto_id: int, quantidade: int) -> None:
-    pass
-
-  @abstractmethod
-  def remover_produto(self, produto_id: int, quantidade: int) -> None:
-    pass
-  
-  @abstractmethod
-  def obter_lista(self, dispensa_id: int) -> Dict[int, int]:
-    pass
-
-  @abstractmethod
-  def valor_compra(self) -> float:
+  def valor_compra(cls, id: int) -> float:
     pass
 
 """
   Implementação Interface Usuario
 """
 
-class Usuario(ABC):
+class UsuarioInterface(ABC):
   @abstractmethod
   def __init__(self, nome: str, email: str, senha: str) -> None:
     pass
@@ -94,10 +78,6 @@ class Usuario(ABC):
 
   @abstractmethod
   def email(self) -> str:
-    pass
-
-  @abstractmethod
-  def email(self, novo_email: str) -> None:
     pass
 
   @abstractmethod
@@ -161,21 +141,17 @@ class Usuario(ABC):
   Implementação Interface Dispensa
 """
 
-class Dispensa(ABC):
+class DispensaInterface(ABC):
   @abstractmethod
-  def __init__(self, residencia_id: int) -> None:
+  def estoque(cls) -> Dict[int, int]:
     pass
 
   @abstractmethod
-  def estoque(self) -> Dict[int, int]:
+  def adicionar_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def adicionar_produto(self, produto_id: int, quantidade: int) -> None:
-    pass
-
-  @abstractmethod
-  def remover_produto(self, produto_id: int, quantidade: int) -> None:
+  def remover_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
 
@@ -183,47 +159,43 @@ class Dispensa(ABC):
   Implementação Interface Residência
 """
 
-class Residencia(ABC):
+class ResidenciaInterface(ABC):
   @abstractmethod
-  def __init__(self) -> None:
+  def administrador(cls, id: int) -> int:
     pass
 
   @abstractmethod
-  def administrador(self) -> int:
+  def moradores(cls, id: int) -> List[int]:
     pass
 
   @abstractmethod
-  def moradores(self) -> List[int]:
-    pass
-
-  @abstractmethod
-  def lista_geral(self) -> int:
+  def lista_geral(cls, id: int) -> int:
     pass
 
   @abstractmethod  
-  def dispensa(self) -> int:
+  def dispensa(cls, id: int) -> int:
     pass
 
   @abstractmethod
-  def adicionar_morador(self, novo_morador_id: int) -> None:
+  def adicionar_morador(cls, id: int, novo_morador_id: int) -> None:
     pass
 
   @abstractmethod
-  def remover_morador(self, morador_id: int) -> None:
+  def remover_morador(cls, id: int, morador_id: int) -> None:
     pass
   
   @abstractmethod
-  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+  def remover_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def adicionar_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+  def remover_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass

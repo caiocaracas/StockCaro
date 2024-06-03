@@ -1,43 +1,43 @@
-from scripts.interfaces import List, Type
-from scripts.interfaces import Residencia, Usuario, Produto, Lista, Dispensa
-from scripts.lista import ListaGeral
-from scripts.dispensa import Dispensa
+from scripts.interfaces import List
+from scripts.interfaces import ResidenciaInterface
 
-class Residencia(Residencia):
-  def __init__(self, admin_id: int) -> None:
+class Residencia(ResidenciaInterface):
+  @classmethod
+  def administrador(cls, id: int) -> int:
     pass
 
-  @property
-  def administrador(self) -> int:
-    return self.__administrador
-
-  @property
-  def moradores(self) -> List[int]:
-    return self.__moradores
-  
-  @property
-  def lista_geral(self) -> int:
-    return self.__lista_geral
-  
-  @property
-  def dispensa(self) -> int:
-    return self.__dispensa
-
-  def adicionar_morador(self, novo_morador_id: int) -> None:
+  @classmethod
+  def moradores(cls, id: int) -> List[int]:
     pass
 
-  def remover_morador(self, morador_id: int) -> None:
+  @classmethod
+  def lista_geral(cls, id: int) -> int:
+    pass
+
+  @classmethod  
+  def dispensa(cls, id: int) -> int:
+    pass
+
+  @classmethod
+  def adicionar_morador(cls, id: int, novo_morador_id: int) -> None:
+    pass
+
+  @classmethod
+  def remover_morador(cls, id: int, morador_id: int) -> None:
     pass
   
-  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+  @classmethod
+  def adicionar_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
-  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+  @classmethod
+  def remover_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
-  def adicionar_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+  @classmethod
+  def adicionar_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
 
-  def remover_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+  @classmethod
+  def remover_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
     pass
-  

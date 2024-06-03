@@ -1,11 +1,11 @@
-from scripts.interfaces import Dict, Type
-from scripts.interfaces import Usuario, Produto, Residencia, Dispensa
-from scripts.lista import ListaPessoal
+from scripts.interfaces import Dict
+from scripts.interfaces import UsuarioInterface
 
-class UsuarioComum(Usuario):
-
+class Usuario(UsuarioInterface):
   def __init__(self, nome: str, email: str, senha: str) -> None:
-    pass
+    self.__nome = nome
+    self.__senha = senha
+    self.__email = email
 
   @property
   def id(self) -> int:
@@ -22,10 +22,6 @@ class UsuarioComum(Usuario):
   @property
   def email(self) -> str:
     return self.__email
-
-  @email.setter
-  def email(self, novo_email: str) -> None:
-    pass
 
   @property
   def __senha(self) -> str:
@@ -47,6 +43,13 @@ class UsuarioComum(Usuario):
   def residencia(self, residencia_id: int) -> None:
     pass
   
+  @classmethod
+  def carregar_usuario(cls, atributos: Dict) -> 'Usuario':
+    pass
+
+  def salvar_usuario(self) -> None:
+    pass
+
   def autenticar(self, email: str, senha: str) -> bool:
     pass
   
@@ -79,19 +82,19 @@ class UsuarioComum(Usuario):
   Implementação de Administrador
 """
 
-class Administrador(UsuarioComum):
+class Administrador(Usuario):
   def __init__(self, nome: str, email: str, senha: str, residencia_id: int) -> None:
     super().__init__(nome, email, senha)
     self.__residencia = residencia_id
-  
-  def adicionar_produto_geral(self, produto: Produto, quantidade: int) -> None:
+
+  def adicionar_produto_geral(self, produto_id: int, quantidade: int) -> None:
     pass
 
-  def remover_produto_geral(self, produto: Produto, quantidade: int) -> None:
+  def remover_produto_geral(self, produto_id: int, quantidade: int) -> None:
     pass
 
-  def adicionar_morador(self, morador: UsuarioComum) -> None:
+  def adicionar_morador(self, morador_id: int) -> None:
     pass
 
-  def remover_morador(self, morador: UsuarioComum) -> None:
+  def remover_morador(self, morador_id: int) -> None:
     pass

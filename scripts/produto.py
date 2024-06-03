@@ -1,47 +1,35 @@
 from scripts.interfaces import List
-from scripts.interfaces import Produto
+from scripts.interfaces import ProdutoInterface
 
 """
-  Implementação de Produto Pessoal
+  Implementação de Produto
 """
 
-class ProdutoPessoal(Produto):
-  def __init__(self, nome_prodto: str, id_produto: int, preco: float, usuarios: List[int]) -> None:
-    self.__nome_produto = nome_prodto
-    self.__preco = preco
-    self.__pertence = usuarios
-    self.__id = id_produto
+class Produto(ProdutoInterface):
+  @classmethod
+  def get_nome_produto(cls, id: int) -> str:
+    pass
   
-  @property
-  def nome_produto(self) -> str:
-    return self.__nome_produto
+  @classmethod
+  def set_nome_produto(cls, id: int, novo_nome: str) -> None:
+    pass
   
-  @nome_produto.setter
-  def nome_produto(self, novo_nome: str) -> None:
-    self.__nome_produto = novo_nome
+  @classmethod
+  def get_preco(cls, id: int) -> float:
+    pass
   
-  @property
-  def id(self) -> int:
-    return self.__id
-  
-  @property
-  def preco(self) -> float:
-    return self.__preco
-  
-  @preco.setter
-  def preco(self, novo_preco: float) -> None:
-    self.__preco = novo_preco
-  
-  @property
-  def pertence(self) -> List[int]:
-    return self.__pertence
-  
-  def adicionar_usuario(self, novo_usuario: int) -> None:
-    if novo_usuario not in self.pertence:
-      self.__pertence.append(novo_usuario)
+  @classmethod
+  def set_preco(cls, id: int, novo_preco: float) -> None:
+    pass
 
-  def remover_usuario(self, usuario: int) -> None:
-    if usuario in self._pertence:
-      self.__pertence.remove(usuario)
-    else:
-      raise ValueError("Esse usuario não possui esse produto na lista")
+  @classmethod
+  def pertence(cls, id: int) -> List[int]:
+    pass
+
+  @classmethod
+  def adicionar_usuario(cls, id: int, novo_usuario: int) -> None:
+    pass
+  
+  @classmethod
+  def remover_usuario(cls, id: int, usuario: int) -> None:
+    pass
