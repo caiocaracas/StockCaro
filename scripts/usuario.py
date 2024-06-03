@@ -2,10 +2,12 @@ from scripts.interfaces import Dict
 from scripts.interfaces import UsuarioInterface
 
 class Usuario(UsuarioInterface):
-  def __init__(self, nome: str, email: str, senha: str) -> None:
+  def __init__(self, nome: str, email: str, senha: str, id_usuario: int, id_residencia: int) -> None:
     self.__nome = nome
     self.__senha = senha
     self.__email = email
+    self.__id = id_usuario
+    self.__residencia = id_residencia
 
   @property
   def id(self) -> int:
@@ -37,15 +39,20 @@ class Usuario(UsuarioInterface):
 
   @property
   def residencia(self) -> int:
-    pass
+    return self.__residencia
   
   @residencia.setter
   def residencia(self, residencia_id: int) -> None:
-    pass
+    self.__residencia = residencia_id
   
   @classmethod
-  def carregar_usuario(cls, atributos: Dict) -> 'Usuario':
-    pass
+  def carregar_usuario(cls, atributos: dict) -> 'Usuario':
+    nome = atributos['nome']
+    email = atributos['email']
+    senha = atributos['senha']
+    id_usuario = atributos['id_usuario']
+    id_residencia = atributos['residencia_id']
+    return cls(nome, email, senha, id_usuario, id_residencia)
 
   def salvar_usuario(self) -> None:
     pass
