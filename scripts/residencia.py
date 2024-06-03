@@ -1,48 +1,43 @@
-from src.interfaces import List, Type
-from src.interfaces import Residencia, Usuario, Produto, Lista, Dispensa
-from src.lista import ListaGeral
-from src.dispensa import Dispensa
+from scripts.interfaces import List, Type
+from scripts.interfaces import Residencia, Usuario, Produto, Lista, Dispensa
+from scripts.lista import ListaGeral
+from scripts.dispensa import Dispensa
 
 class Residencia(Residencia):
-  def __init__(self, admin: Type["Usuario"]) -> None:
-    self._administrador = admin
-    self._lista_geral = ListaGeral(self)
-    self._dispensa = Dispensa(self)
-    self._moradores: List[Type["Usuario"]] = [admin]
+  def __init__(self, admin_id: int) -> None:
+    pass
 
   @property
-  def administrador(self) -> Type["Usuario"]:
-    return self._administrador
+  def administrador(self) -> int:
+    return self.__administrador
 
   @property
-  def moradores(self) -> List[Type["Usuario"]]:
-    return self._moradores
+  def moradores(self) -> List[int]:
+    return self.__moradores
   
   @property
-  def lista_geral(self) -> Type["Lista"]:
-    return self._lista_geral
+  def lista_geral(self) -> int:
+    return self.__lista_geral
   
   @property
-  def dispensa(self) -> Type["Dispensa"]:
-    return self._dispensa
+  def dispensa(self) -> int:
+    return self.__dispensa
 
-  def adicionar_morador(self, novo_morador: Type["Usuario"]) -> None:
-    if novo_morador not in self.moradores:
-      self._moradores.append(novo_morador)
+  def adicionar_morador(self, novo_morador_id: int) -> None:
+    pass
 
-  def remover_morador(self, morador: Type["Usuario"]) -> None:
-    if morador in self.moradores:
-      self._moradores.remove(morador)
+  def remover_morador(self, morador_id: int) -> None:
+    pass
   
-  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    self._dispensa.adicionar_produto(produto, quantidade)
+  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+    pass
 
-  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    self._dispensa.remover_produto(produto, quantidade)
-  
-  def adicionar_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
-    self._lista_geral.adicionar_produto(produto, quantidade)
+  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+    pass
 
-  def remover_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
-    self._lista_geral.remover_produto(produto, quantidade)
+  def adicionar_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+    pass
+
+  def remover_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
+    pass
   

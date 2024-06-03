@@ -5,18 +5,8 @@ from typing import Dict, List, Type
  Implementação Interface Produto
 """
 class Produto(ABC):
-  id_counter = 1000
-
   @abstractmethod
-  def __init__(self, nome_prodto: str, preco: float, usuarios: List[Type["Usuario"]]) -> None:
-    pass
-  
-  @abstractmethod
-  def __str__(self) -> str:
-    pass
-
-  @abstractmethod
-  def __eq__(self, produto: object) -> bool:
+  def __init__(self, nome_prodto: str, id_produto: int, preco: float, usuarios: List[int]) -> None:
     pass
 
   @abstractmethod
@@ -40,15 +30,15 @@ class Produto(ABC):
     pass
 
   @abstractmethod
-  def pertence(self) -> List[Type["Usuario"]]:
+  def pertence(self) -> List[int]:
     pass
 
   @abstractmethod
-  def adicionar_usuario(self, novo_usuario: Type["Usuario"]) -> None:
+  def adicionar_usuario(self, novo_usuario: int) -> None:
     pass
 
   @abstractmethod
-  def remover_usuario(self, usuario: Type["Usuario"]) -> None:
+  def remover_usuario(self, usuario: int) -> None:
     pass
 
 
@@ -66,15 +56,15 @@ class Lista(ABC):
     pass
 
   @abstractmethod
-  def adicionar_produto(self, novo_produto: Type["Produto"], quantidade: int) -> None:
+  def adicionar_produto(self, novo_produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto(self, produto_id: int, quantidade: int) -> None:
     pass
   
   @abstractmethod
-  def obter_lista(self, dispensa: Type["Dispensa"]) -> Dict[int, int]:
+  def obter_lista(self, dispensa_id: int) -> Dict[int, int]:
     pass
 
   @abstractmethod
@@ -86,18 +76,8 @@ class Lista(ABC):
 """
 
 class Usuario(ABC):
-  id_counter = 50000
-  
   @abstractmethod
   def __init__(self, nome: str, email: str, senha: str) -> None:
-    pass
-  
-  @abstractmethod
-  def __str__(self) -> str:
-    pass
-
-  @abstractmethod
-  def __eq__(self, usuario: object) -> bool:
     pass
   
   @abstractmethod
@@ -109,7 +89,7 @@ class Usuario(ABC):
     pass
 
   @abstractmethod
-  def lista(self) -> Type["Lista"]:
+  def lista(self) -> int:
     pass
 
   @abstractmethod
@@ -129,15 +109,15 @@ class Usuario(ABC):
     pass
   
   @abstractmethod
-  def dispensa(self) -> Type["Dispensa"]:
+  def dispensa(self) -> int:
     pass
 
   @abstractmethod
-  def residencia(self) -> Type["Residencia"]:
+  def residencia(self) -> int:
     pass
   
   @abstractmethod
-  def residencia(self, residencia: Type["Residencia"]) -> None:
+  def residencia(self, residencia_id: int) -> None:
     pass
   
   @abstractmethod
@@ -149,11 +129,11 @@ class Usuario(ABC):
     pass
 
   @abstractmethod
-  def adicionar_produto_lista(self, novo_produto: Type["Produto"], quantidade: int) -> None:
+  def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_lista(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto_lista(self, produto_id: int, quantidade: int) -> None:
     pass
   
   @abstractmethod
@@ -169,11 +149,11 @@ class Usuario(ABC):
     pass
 
   @abstractmethod
-  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     pass
 
 
@@ -183,7 +163,7 @@ class Usuario(ABC):
 
 class Dispensa(ABC):
   @abstractmethod
-  def __init__(self, residencia: Type["Residencia"]) -> None:
+  def __init__(self, residencia_id: int) -> None:
     pass
 
   @abstractmethod
@@ -191,15 +171,11 @@ class Dispensa(ABC):
     pass
 
   @abstractmethod
-  def produtos(self) -> List[Type["Produto"]]:
+  def adicionar_produto(self, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def adicionar_produto(self, produto: Type["Produto"], quantidade: int) -> None:
-    pass
-
-  @abstractmethod
-  def remover_produto(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto(self, produto_id: int, quantidade: int) -> None:
     pass
 
 
@@ -213,41 +189,41 @@ class Residencia(ABC):
     pass
 
   @abstractmethod
-  def administrador(self) -> Type["Usuario"]:
+  def administrador(self) -> int:
     pass
 
   @abstractmethod
-  def moradores(self) -> List[Type["Usuario"]]:
+  def moradores(self) -> List[int]:
     pass
 
   @abstractmethod
-  def lista_geral(self) -> Type["Lista"]:
+  def lista_geral(self) -> int:
     pass
 
   @abstractmethod  
-  def dispensa(self) -> Type["Dispensa"]:
+  def dispensa(self) -> int:
     pass
 
   @abstractmethod
-  def adicionar_morador(self, novo_morador: Type["Usuario"]) -> None:
+  def adicionar_morador(self, novo_morador_id: int) -> None:
     pass
 
   @abstractmethod
-  def remover_morador(self, morador: Type["Usuario"]) -> None:
+  def remover_morador(self, morador_id: int) -> None:
     pass
   
   @abstractmethod
-  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def adicionar_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
+  def adicionar_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_lista_geral(self, produto: Type["Produto"], quantidade: int) -> None:
+  def remover_produto_lista_geral(self, produto_id: int, quantidade: int) -> None:
     pass

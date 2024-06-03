@@ -3,8 +3,8 @@ from tkinter import messagebox
 from typing import Union
 
 class GUI:
-  def __init__(self, master: tk.Tk) -> None:
-    self.master = master
+  def __init__(self) -> None:
+    self.master = tk.Tk()
     self.master.title("Gerenciador Mercado")
     self.master.geometry("700x400")
     self.master.resizable(False, False)
@@ -56,8 +56,7 @@ class GUI:
     self.config_frame = tk.Frame(self.master)
     self.frames.append(self.config_frame)
 
-    for frame in self.frames:
-      frame.forget()
+    self.show_login()
 
   """ Screens """
 
@@ -302,9 +301,6 @@ class GUI:
     for frame in self.frames:
       frame.forget()
     
-    for widget in self.login_frame.winfo_children():
-      widget.destroy()
-    
     self.master.geometry("400x200")
     self.login_screen()
     self.login_frame.pack(fill=tk.BOTH, expand=True)
@@ -313,9 +309,6 @@ class GUI:
   def show_cadastro(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.cadastro_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("500x300")
     self.cadastro_screen()
@@ -325,9 +318,6 @@ class GUI:
   def show_usuario(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.usuario_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.usuario_screen()
@@ -337,9 +327,6 @@ class GUI:
   def show_admin(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.admin_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x420")
     self.admin_screen()
@@ -349,9 +336,6 @@ class GUI:
   def show_adicionar_produto(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.adicionar_produto_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x500")
     self.adicionar_produto_screen()
@@ -361,9 +345,6 @@ class GUI:
   def show_modificar_lista(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.modificar_lista_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("600x450")
     self.modificar_lista_screen()
@@ -373,9 +354,6 @@ class GUI:
   def show_verificar_dividas(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.verificar_dividas_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.verificar_dividas_screen()
@@ -385,9 +363,6 @@ class GUI:
   def show_verificar_dispensa(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.verificar_dispensa_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.verificar_dispensa_screen()
@@ -397,9 +372,6 @@ class GUI:
   def show_realizar_compra(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.realizar_compra_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.realizar_compra_screen()
@@ -409,9 +381,6 @@ class GUI:
   def show_adicionar_morador(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.adicionar_morador_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.adicionar_morador_screen()
@@ -421,9 +390,6 @@ class GUI:
   def show_config(self) -> None:
     for frame in self.frames:
       frame.forget()
-    
-    for widget in self.config_frame.winfo_children():
-      widget.destroy()
 
     self.master.geometry("700x400")
     self.config_screen()
@@ -582,11 +548,11 @@ class GUI:
 
     if senha_atual == "1234":
       messagebox.showinfo("Senha Atualizada", f"Senha atualizada para {nova_senha}")
+    else:
+      messagebox.showerror("Senha não alterada", "Senha atual incorreta")
 
 
 if __name__ == "__main__":
-  root = tk.Tk()
-  interface = GUI(root)
-  interface.show_login()
+  interface = GUI()
   
-  root.mainloop()
+  interface.master.mainloop()

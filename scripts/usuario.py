@@ -1,97 +1,69 @@
-from src.interfaces import Dict, Type
-from src.interfaces import Usuario, Produto, Residencia, Dispensa
-from src.lista import ListaPessoal
+from scripts.interfaces import Dict, Type
+from scripts.interfaces import Usuario, Produto, Residencia, Dispensa
+from scripts.lista import ListaPessoal
 
 class UsuarioComum(Usuario):
 
   def __init__(self, nome: str, email: str, senha: str) -> None:
-    self._nome = nome
-    self.email = email  # Passa email para o setter
-    self.senha = senha  # Passa senha para o setter
+    pass
 
-    self._id = Usuario.id_counter
-    Usuario.id_counter += 1
-
-    self._lista = ListaPessoal(self)
-    self._residencia = None
-  
-  def __str__(self) -> str:
-    return f"User: {self.nome}, Email: {self.email}"
-
-  def __eq__(self, usuario: object) -> bool:
-    return self.nome == usuario.nome and self.email == usuario.email
-  
   @property
   def id(self) -> int:
-    return self._id
+    return self.__id
   
   @property
   def nome(self) -> str:
-    return self._nome
+    return self.__nome
 
   @property
-  def lista(self) -> Type["ListaPessoal"]:
-    return self._lista
+  def lista(self) -> int:
+    return self.__lista
   
   @property
   def email(self) -> str:
-    return self._email
+    return self.__email
 
   @email.setter
   def email(self, novo_email: str) -> None:
-    splited = novo_email.split("@")
-    if len(splited) == 2:
-      if len(splited[1].split(".")) in (2, 3):
-        self._email = novo_email
-      else:
-        raise ValueError("Novo email inválido")
-    else:
-      raise ValueError("Novo email inválido")
+    pass
 
   @property
-  def senha(self) -> str:
-    return self._senha
+  def __senha(self) -> str:
+    return self.__senha
 
-  @senha.setter
+  @__senha.setter
   def senha(self, nova_senha: str) -> None:
-    self._senha = nova_senha
+    self.__senha = nova_senha
   
   @property
-  def dispensa(self) -> Type["Dispensa"]:
-    return self._residencia.dispensa
+  def dispensa(self) -> int:
+    pass
 
   @property
-  def residencia(self) -> Type["Residencia"]:
-    return self._residencia
+  def residencia(self) -> int:
+    pass
   
   @residencia.setter
-  def residencia(self, residencia: Type["Residencia"]) -> None:
-    self._residencia = residencia
+  def residencia(self, residencia_id: int) -> None:
+    pass
   
   def autenticar(self, email: str, senha: str) -> bool:
-    return email == self.email and self.senha == senha
+    pass
   
   def alterar_senha(self, antiga_senha: str, nova_senha: str) -> None:
-    if antiga_senha == self.senha:
-      self.senha = nova_senha
-    else:
-      raise ValueError("Senha antiga incorreta")
+    pass
 
-  def adicionar_produto_lista(self, novo_produto: Type["Produto"], quantidade: int) -> None:
-    self._lista.adicionar_produto(novo_produto, quantidade)
+  def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
+    pass
 
-  def remover_produto_lista(self, produto: Type["Produto"], quantidade: int) -> None:
-    self._lista.remover_produto(produto, quantidade)
+  def remover_produto_lista(self, produto_id: int, quantidade: int) -> None:
+    pass
   
-  def adicionar_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    if self.residencia == None:
-      raise ValueError("Nenhuma residência cadastrada ao usuário")
-    self._residencia.adicionar_produto_dispensa(produto=produto, quantidade=quantidade)
+  def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+    pass
 
-  def remover_produto_dispensa(self, produto: Type["Produto"], quantidade: int) -> None:
-    if self.residencia == None:
-      raise ValueError("Nenhuma residência cadastrada ao usuário")
-    self._residencia.remover_produto_dispensa(produto=produto, quantidade=quantidade)
+  def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
+    pass
 
   def dividas(self) -> Dict[str, float]:
     pass
@@ -108,18 +80,18 @@ class UsuarioComum(Usuario):
 """
 
 class Administrador(UsuarioComum):
-  def __init__(self, nome: str, email: str, senha: str, residencia: Type["Residencia"]) -> None:
+  def __init__(self, nome: str, email: str, senha: str, residencia_id: int) -> None:
     super().__init__(nome, email, senha)
-    self._residencia = residencia
+    self.__residencia = residencia_id
   
   def adicionar_produto_geral(self, produto: Produto, quantidade: int) -> None:
-    self._residencia.adicionar_produto_lista_geral(produto=produto, quantidade=quantidade)
+    pass
 
   def remover_produto_geral(self, produto: Produto, quantidade: int) -> None:
-    self._residencia.remover_produto_lista_geral(produto=produto, quantidade=quantidade)
+    pass
 
   def adicionar_morador(self, morador: UsuarioComum) -> None:
-    self._residencia.adicionar_morador(novo_morador=morador)
+    pass
 
   def remover_morador(self, morador: UsuarioComum) -> None:
-    self._residencia.remover_morador(morador=morador)
+    pass
