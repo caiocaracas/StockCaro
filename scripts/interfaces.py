@@ -1,36 +1,37 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List, Type
+from scripts.Repository import BaseRepository
 
 """
  Implementação Interface Produto
 """
 class ProdutoInterface(ABC):
   @abstractmethod
-  def get_nome_produto(cls, id: int) -> str:
+  def get_nome_produto(cls, db: Type["BaseRepository"], id: int) -> str:
     pass
 
   @abstractmethod
-  def set_nome_produto(cls, id: int, novo_nome: str) -> None:
+  def set_nome_produto(cls, db: Type["BaseRepository"], id: int, novo_nome: str) -> None:
     pass
   
   @abstractmethod
-  def get_preco(cls, id: int) -> float:
+  def get_preco(cls, db: Type["BaseRepository"], id: int) -> float:
     pass
 
   @abstractmethod
-  def set_preco(cls, id: int, novo_preco: float) -> None:
+  def set_preco(cls, db: Type["BaseRepository"], id: int, novo_preco: float) -> None:
     pass
 
   @abstractmethod
-  def pertence(cls, id: int) -> List[int]:
+  def pertence(cls, db: Type["BaseRepository"], id: int) -> List[int]:
     pass
 
   @abstractmethod
-  def adicionar_usuario(cls, id: int, novo_usuario: int) -> None:
+  def adicionar_usuario(cls, db: Type["BaseRepository"], id: int, novo_usuario: int) -> None:
     pass
 
   @abstractmethod
-  def remover_usuario(cls, id: int, usuario: int) -> None:
+  def remover_usuario(cls, db: Type["BaseRepository"], id: int, usuario: int) -> None:
     pass
 
 
@@ -40,19 +41,19 @@ class ProdutoInterface(ABC):
 
 class ListaInterface(ABC):
   @abstractmethod
-  def adicionar_produto(cls, id: int, novo_produto_id: int, quantidade: int) -> None:
+  def adicionar_produto(cls, db: Type["BaseRepository"], id: int, novo_produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def remover_produto(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
   
   @abstractmethod
-  def obter_lista(cls, id: int, dispensa_id: int) -> Dict[int, int]:
+  def obter_lista(cls, db: Type["BaseRepository"], id: int, dispensa_id: int) -> Dict[int, int]:
     pass
 
   @abstractmethod
-  def valor_compra(cls, id: int) -> float:
+  def valor_compra(cls, db: Type["BaseRepository"], id: int) -> float:
     pass
 
 """
@@ -147,11 +148,11 @@ class DispensaInterface(ABC):
     pass
 
   @abstractmethod
-  def adicionar_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def remover_produto(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
 
 
@@ -161,41 +162,41 @@ class DispensaInterface(ABC):
 
 class ResidenciaInterface(ABC):
   @abstractmethod
-  def administrador(cls, id: int) -> int:
+  def administrador(cls, db: Type["BaseRepository"], id: int) -> int:
     pass
 
   @abstractmethod
-  def moradores(cls, id: int) -> List[int]:
+  def moradores(cls, db: Type["BaseRepository"], id: int) -> List[int]:
     pass
 
   @abstractmethod
-  def lista_geral(cls, id: int) -> int:
+  def lista_geral(cls, db: Type["BaseRepository"], id: int) -> int:
     pass
 
   @abstractmethod  
-  def dispensa(cls, id: int) -> int:
+  def dispensa(cls, db: Type["BaseRepository"], id: int) -> int:
     pass
 
   @abstractmethod
-  def adicionar_morador(cls, id: int, novo_morador_id: int) -> None:
+  def adicionar_morador(cls, db: Type["BaseRepository"], id: int, novo_morador_id: int) -> None:
     pass
 
   @abstractmethod
-  def remover_morador(cls, id: int, morador_id: int) -> None:
+  def remover_morador(cls, db: Type["BaseRepository"], id: int, morador_id: int) -> None:
     pass
   
   @abstractmethod
-  def adicionar_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_dispensa(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_dispensa(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def remover_produto_dispensa(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def adicionar_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_lista_geral(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
 
   @abstractmethod
-  def remover_produto_lista_geral(cls, id: int, produto_id: int, quantidade: int) -> None:
+  def remover_produto_lista_geral(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
     pass
