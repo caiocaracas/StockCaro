@@ -1,4 +1,4 @@
-from scripts.interfaces import Dict, List
+from scripts.interfaces import Dict
 from scripts.interfaces import DispensaInterface
 
 class Dispensa(DispensaInterface):

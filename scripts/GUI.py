@@ -301,6 +301,9 @@ class GUI:
     for frame in self.frames:
       frame.forget()
     
+    for widget in self.login_frame.winfo_children():
+      widget.destroy()
+
     self.master.geometry("400x200")
     self.login_screen()
     self.login_frame.pack(fill=tk.BOTH, expand=True)
@@ -309,6 +312,9 @@ class GUI:
   def show_cadastro(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.cadastro_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("500x300")
     self.cadastro_screen()
@@ -319,6 +325,9 @@ class GUI:
     for frame in self.frames:
       frame.forget()
 
+    for widget in self.usuario_frame.winfo_children():
+      widget.destroy()
+
     self.master.geometry("700x400")
     self.usuario_screen()
     self.usuario_frame.pack(fill=tk.BOTH, expand=True)
@@ -328,6 +337,9 @@ class GUI:
     for frame in self.frames:
       frame.forget()
 
+    for widget in self.admin_frame.winfo_children():
+      widget.destroy()
+
     self.master.geometry("700x420")
     self.admin_screen()
     self.admin_frame.pack(fill=tk.BOTH, expand=True)
@@ -336,6 +348,9 @@ class GUI:
   def show_adicionar_produto(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.adicionar_produto_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("700x500")
     self.adicionar_produto_screen()
@@ -345,6 +360,9 @@ class GUI:
   def show_modificar_lista(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.modificar_lista_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("600x450")
     self.modificar_lista_screen()
@@ -354,6 +372,9 @@ class GUI:
   def show_verificar_dividas(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.verificar_dividas_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("700x400")
     self.verificar_dividas_screen()
@@ -363,6 +384,9 @@ class GUI:
   def show_verificar_dispensa(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.verificar_dispensa_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("700x400")
     self.verificar_dispensa_screen()
@@ -373,6 +397,9 @@ class GUI:
     for frame in self.frames:
       frame.forget()
 
+    for widget in self.realizar_compra_frame.winfo_children():
+      widget.destroy()
+
     self.master.geometry("700x400")
     self.realizar_compra_screen()
     self.realizar_compra_frame.pack(fill=tk.BOTH, expand=True)
@@ -381,6 +408,9 @@ class GUI:
   def show_adicionar_morador(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.adicionar_morador.winfo_children():
+      widget.destroy()
 
     self.master.geometry("700x400")
     self.adicionar_morador_screen()
@@ -390,6 +420,9 @@ class GUI:
   def show_config(self) -> None:
     for frame in self.frames:
       frame.forget()
+    
+    for widget in self.config_frame.winfo_children():
+      widget.destroy()
 
     self.master.geometry("700x400")
     self.config_screen()
