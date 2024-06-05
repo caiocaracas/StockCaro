@@ -22,7 +22,7 @@ class Database:
                 password=password,
                 database=database
             )
-            # Cria um cursor para executar comandos SQL]
+            # Cria um cursor para executar comandos SQL
             self.cursor = self.connection.cursor()
         except mysql.connector.Error as err:
             # Levanta um erro se a conexão falhar

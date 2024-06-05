@@ -52,10 +52,6 @@ class ListaInterface(ABC):
   def obter_lista(cls, db: Type["BaseRepository"], id: int, dispensa_id: int) -> Dict[int, int]:
     pass
 
-  @abstractmethod
-  def valor_compra(cls, db: Type["BaseRepository"], id: int) -> float:
-    pass
-
 """
   Implementação Interface Usuario
 """
@@ -89,10 +85,6 @@ class UsuarioInterface(ABC):
   def senha(self, nova_senha: str) -> None:
     pass
   
-  @abstractmethod
-  def dispensa(self) -> int:
-    pass
-
   @abstractmethod
   def residencia(self) -> int:
     pass
@@ -199,4 +191,8 @@ class ResidenciaInterface(ABC):
 
   @abstractmethod
   def remover_produto_lista_geral(cls, db: Type["BaseRepository"], id: int, produto_id: int, quantidade: int) -> None:
+    pass
+
+  @abstractmethod
+  def lista_compras(cls, db: Type["BaseRepository"], id_residencia: int) -> Dict[str, int]:
     pass
