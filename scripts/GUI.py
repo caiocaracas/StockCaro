@@ -1,13 +1,18 @@
 import tkinter as tk
 from tkinter import messagebox
 from typing import Union
+from scripts.usuario import Usuario, Administrador
+from scripts.Repository import UserRepository
 
 class GUI:
-  def __init__(self) -> None:
+  def __init__(self, db: UserRepository) -> None:
     self.master = tk.Tk()
     self.master.title("Gerenciador Mercado")
     self.master.geometry("700x400")
     self.master.resizable(False, False)
+
+    self.__db = db
+    self.user : Union[Usuario, Administrador] = None
 
     self.frames = []
     self.frame_anterior = None
@@ -113,7 +118,7 @@ class GUI:
     self.frame_anterior = self.show_usuario
     
     """ Bem Vindo """
-    tk.Label(self.usuario_frame, text=f"Bem vindo, {self.user}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
+    tk.Label(self.usuario_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
     tk.Button(self.usuario_frame, text="Verificar Dividas",  width=12, height=4, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=5)
@@ -138,7 +143,7 @@ class GUI:
     self.frame_anterior = self.show_admin
     
     """ Bem Vindo """
-    tk.Label(self.admin_frame, text=f"Bem vindo, {self.user}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
+    tk.Label(self.admin_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
     tk.Button(self.admin_frame, text="Verificar Dividas",  width=12, height=3, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=4)
@@ -440,12 +445,15 @@ class GUI:
       messagebox.showerror("Preenchimento Incompleto", "Preencha todos os campos na tela")
       return None
     
-    self.user = username
-    
-    if username == "Arthur" and password == "1234":
-      self.show_usuario()
-    elif username == "Admin" and password == "admin":
-      self.show_admin()
+    # carregar informações de usuario
+    try:
+      info = self.__db.login(username)
+      self.user = Usuario.carregar_usuario(info, self.__db)
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)  
+
+    if self.user.autenticar(username, password):
+      self.show_usuario() 
     else:
       messagebox.showerror("Usuário não cadastrado", "Senha ou Usuário Incorreto(s)")
 
@@ -460,7 +468,12 @@ class GUI:
       return None
     
     if senha == self.entry_confirmar_senha.get():
-      print(f"{name} - {email} - {senha}")
+      
+      try:
+        Usuario.salvar_usuario(self.__db, name, email, senha)
+      except RuntimeError as erro:
+        messagebox.showerror("Erro", erro)
+
       self.show_login()
     else:
       messagebox.showerror("Novo Usuário Inválido", "Senha incorreta ou Usuario já existente")

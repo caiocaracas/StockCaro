@@ -8,10 +8,17 @@ from scripts.Repository import UserRepository
 
 class Produto(ProdutoInterface):
   @classmethod
-  def get_nome_produto(cls, db: UserRepository, id: int) -> str:
+  def criar_produto(cls, db: UserRepository, id_residencia: int, nome: str) -> None:
     try:
-      produto = db.get_produto(id)
-      return produto['nome']
+      db.registrar_produto_residencia(id_residencia, nome)
+    except RuntimeError:
+      raise RuntimeError("Não foi possível cadastrar o produto")
+  
+  @classmethod
+  def get_nome_produto(cls, db: UserRepository, id_produto: int, id_residencia: int) -> str:
+    try:
+      # db.mostar_produto_da_residencia(id_residencia)
+      pass
     except RuntimeError:
       raise RuntimeError("Não foi possível encontrar o produto")
   

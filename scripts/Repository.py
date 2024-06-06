@@ -309,10 +309,10 @@ class UserRepository(BaseRepository):
              raise RuntimeError(f"ERRO: a residencia de ID {id_residencia} não existe")
 
     # Tested
-    def registrar_produto_residencia(self, id_residencia, nome:str, quantidade:int, unid_medida:str, categoria):
-        query = "INSERT INTO produtos_residencia (residencia_id, nome, quantidade_unid, unidade_de_medida, categoria) VALUES (%s, %s, %s, %s, %s )"
+    def registrar_produto_residencia(self, id_residencia, nome:str):
+        query = "INSERT INTO produtos_residencia (residencia_id, nome, quantidade_unid, unidade_de_medida, categoria) VALUES (%s, %s)"
         try: 
-            self.database.cursor.execute(query, (id_residencia, nome, quantidade, unid_medida, categoria)) 
+            self.database.cursor.execute(query, (id_residencia, nome,)) 
             self.database.connection.commit()
         except mysql.connector.Error as err:
             raise RuntimeError(f"Erro ao registrar produto na residência de ID {id_residencia}: {str(err)}")
