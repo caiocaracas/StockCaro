@@ -6,7 +6,7 @@ class Dispensa(DispensaInterface):
   @classmethod
   def estoque(cls, db: UserRepository, id_dispensa: int) -> Dict[int, int]:
     try:
-      estoque = db.get_estoque_dispensa(id_dispensa)
+      estoque = db.mostrar_produtos_dispensa(id_dispensa)
       return estoque
     except RuntimeError:
       raise RuntimeError("Impossível encontrar informações sobre essa dispensa")
@@ -24,6 +24,6 @@ class Dispensa(DispensaInterface):
   def remover_produto(cls, db: UserRepository, id: int, produto_id: int, quantidade: int) -> None:
     """ Esperando adição do id da residência na dispensa e criação do metodo abaixo """
     try:
-      db.remover_produto_na_dispensa(produto_id, quantidade)
+      db.deletar_produto_da_dispensa()
     except RuntimeError:
       raise RuntimeError("Impossível remover produto da dispensa")

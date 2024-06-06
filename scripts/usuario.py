@@ -66,7 +66,10 @@ class Usuario(UsuarioInterface):
 
   @classmethod
   def salvar_usuario(cls,  db: UserRepository, nome: str, email: str, senha: str) -> None:
-    db.registrar_usuario(nome, email, senha)
+    try:
+      db.registrar_usuario(nome, email, senha)
+    except RuntimeError as erro:
+      raise erro
 
   def autenticar(self, email: str, senha: str) -> bool:
     return email == self.email and senha == self.senha
@@ -77,16 +80,28 @@ class Usuario(UsuarioInterface):
       self._senha = nova_senha
 
   def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
-    Lista.adicionar_produto(self.__db, self.lista, novo_produto_id, quantidade)
+    try:
+      Lista.adicionar_produto(self.__db, self.lista, novo_produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
 
   def remover_produto_lista(self, produto_id: int, quantidade: int) -> None:
-    Lista.remover_produto(self.__db, self.lista, produto_id, quantidade)
-  
+    try:
+      Lista.remover_produto(self.__db, self.lista, produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
+
   def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
-    Residencia.adicionar_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+    try:
+      Residencia.adicionar_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
 
   def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
-    Residencia.remover_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+    try:
+      Residencia.remover_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
 
   def dividas(self) -> Dict[str, float]:
     pass
@@ -110,13 +125,25 @@ class Administrador(Usuario):
     super().__init__(nome, email, senha, residencia_id, db)
 
   def adicionar_produto_geral(self, produto_id: int, quantidade: int) -> None:
-    Residencia.adicionar_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
+    try:
+      Residencia.adicionar_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
 
   def remover_produto_geral(self, produto_id: int, quantidade: int) -> None:
-    Residencia.remover_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
+    try:
+      Residencia.remover_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
+    except RuntimeError as erro:
+      raise erro
 
   def adicionar_morador(self, morador_id: int) -> None:
-    Residencia.adicionar_morador(self.__db, self.residencia, morador_id)
+    try:
+      Residencia.adicionar_morador(self.__db, self.residencia, morador_id)
+    except RuntimeError as erro:
+      raise erro
 
   def remover_morador(self, morador_id: int) -> None:
-    Residencia.remover_morador(self.__db, self.residencia, morador_id)
+    try:
+      Residencia.remover_morador(self.__db, self.residencia, morador_id)
+    except RecursionError as erro:
+      raise erro

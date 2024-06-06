@@ -55,6 +55,6 @@ class Produto(ProdutoInterface):
   @classmethod
   def remover_usuario(cls, db: UserRepository, id: int, usuario: int) -> None:
     try:
-      db.remover_usuario_em_produto(id_produto=id, id_usuario=usuario)
+      db.deletar_usuario_que_consome_um_produto(id, usuario)
     except RuntimeError:
       raise RuntimeError("Não foi possível adicionar usuario na lista de produto")
