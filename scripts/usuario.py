@@ -2,16 +2,35 @@ from typing import Dict
 from scripts.interfaces import UsuarioInterface
 from scripts.Repository import UserRepository
 from scripts.lista import Lista
-from scripts.dispensa import Dispensa
 from scripts.residencia import Residencia
 
 class Usuario(UsuarioInterface):
+  @classmethod
+  def carregar_usuario(cls, atributos: dict, db: UserRepository) -> 'Usuario':
+    nome = atributos['nome']
+    email = atributos['email']
+    senha = atributos['senha']
+    id_usuario = atributos['id_usuario']
+    id_residencia = atributos['residencia_id']
+    return cls(nome, email, senha, id_usuario, id_residencia, db)
+
+  @classmethod
+  def salvar_usuario(cls,  db: UserRepository, nome: str, email: str, senha: str) -> None:
+    try:
+      validar_email = email.split("@")
+      if len(validar_email) == 2:
+        if len(validar_email[1].split('.')) in (2, 3):
+          db.registrar_usuario(nome, email, senha)
+      
+      raise RuntimeError("Email de cadastro inválido")
+    except RuntimeError as erro:
+      raise erro
+  
   def __init__(self, nome: str, email: str, senha: str, id_usuario: int, id_residencia: int, db: UserRepository) -> None:
     self.__nome = nome
     self.__senha = senha
     self.__email = email
     self.__id = id_usuario
-    self.__lista = id_usuario  # Relação do banco de dados é de 1 pra 1
     self.__residencia = id_residencia
     self.__db = db
 
@@ -22,10 +41,6 @@ class Usuario(UsuarioInterface):
   @property
   def nome(self) -> str:
     return self.__nome
-
-  @property
-  def lista(self) -> int:
-    return self.__lista
   
   @property
   def email(self) -> str:
@@ -50,26 +65,6 @@ class Usuario(UsuarioInterface):
   @property
   def residencia(self) -> int:
     return self.__residencia
-  
-  @residencia.setter
-  def residencia(self, residencia_id: int) -> None:
-    self.__residencia = residencia_id
-  
-  @classmethod
-  def carregar_usuario(cls, atributos: dict, db: UserRepository) -> 'Usuario':
-    nome = atributos['nome']
-    email = atributos['email']
-    senha = atributos['senha']
-    id_usuario = atributos['id_usuario']
-    id_residencia = atributos['residencia_id']
-    return cls(nome, email, senha, id_usuario, id_residencia, db)
-
-  @classmethod
-  def salvar_usuario(cls,  db: UserRepository, nome: str, email: str, senha: str) -> None:
-    try:
-      db.registrar_usuario(nome, email, senha)
-    except RuntimeError as erro:
-      raise erro
 
   def autenticar(self, email: str, senha: str) -> bool:
     return email == self.email and senha == self.senha
@@ -81,13 +76,13 @@ class Usuario(UsuarioInterface):
 
   def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
     try:
-      Lista.adicionar_produto(self.__db, self.lista, novo_produto_id, quantidade)
+      Lista.adicionar_produto(self.__db, self.id, novo_produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
   def remover_produto_lista(self, produto_id: int, quantidade: int) -> None:
     try:
-      Lista.remover_produto(self.__db, self.lista, produto_id, quantidade)
+      Lista.remover_produto(self.__db, self.id, produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
@@ -121,20 +116,21 @@ class Usuario(UsuarioInterface):
 """
 
 class Administrador(Usuario):
+  @classmethod
+  def carregar_usuario(cls, atributos: dict, db: UserRepository) -> 'Administrador':
+    nome = atributos['nome']
+    email = atributos['email']
+    senha = atributos['senha']
+    id_usuario = atributos['id_usuario']
+    id_residencia = atributos['residencia_id']
+    
+    if db.buscar_residencia_por_admin(id_usuario):
+      return cls(nome, email, senha, id_usuario, id_residencia, db)
+    else:
+      return Usuario.carregar_usuario(atributos, db)
+  
   def __init__(self, nome: str, email: str, senha: str, residencia_id: int, db: UserRepository) -> None:
     super().__init__(nome, email, senha, residencia_id, db)
-
-  def adicionar_produto_geral(self, produto_id: int, quantidade: int) -> None:
-    try:
-      Residencia.adicionar_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
-    except RuntimeError as erro:
-      raise erro
-
-  def remover_produto_geral(self, produto_id: int, quantidade: int) -> None:
-    try:
-      Residencia.remover_produto_lista_geral(self.__db, self.residencia, produto_id, quantidade)
-    except RuntimeError as erro:
-      raise erro
 
   def adicionar_morador(self, morador_id: int) -> None:
     try:

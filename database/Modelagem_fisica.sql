@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `gerenciador_mercado`.`usuarios` (
   CONSTRAINT `fk_usuarios_residencias`
     FOREIGN KEY (`residencia_id`)
     REFERENCES `gerenciador_mercado`.`residencias` (`id_residencia`)
-    ON DELETE CASCADE
+    ON DELETE SET NULL
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 17

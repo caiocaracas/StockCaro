@@ -6,24 +6,32 @@ from scripts.Repository import UserRepository
 class Lista(ListaInterface):
   @classmethod
   def adicionar_produto(cls, db: UserRepository, id_user: int, novo_produto_id: int, quantidade: int) -> None:
+    if quantidade <= 0 or not isinstance(quantidade, int):
+      raise RuntimeError("Quantidade deve ser inteira e maior que 0")
+    
     try:
-      if novo_produto_id not in cls.obter_lista(db, id_user):
+      lista = cls.obter_lista(db, id_user)
+      if novo_produto_id not in lista:
         db.adicionar_produto_lista_pessoal(novo_produto_id, id_user, quantidade)
       else:
-        # metodo alterar quantidade lista
-        pass
+        db.aumentar_quantidade_produto_lista_pessoal(id_user, novo_produto_id, quantidade)
+
     except RuntimeError:
       raise RuntimeError(f"Erro ao adicionar o produto de id {novo_produto_id} a lista de id{id}")
 
+
   @classmethod
   def remover_produto(cls, db: UserRepository, id_user: int, produto_id: int, quantidade: int) -> None:
+    if quantidade <= 0 or not isinstance(quantidade, int):
+      raise RuntimeError("Quantidade deve ser inteira e maior que 0")
+    
+    lista = cls.obter_lista(db, id_user)
     try:
-      lista = cls.obter_lista(db, id_user)
       if produto_id in lista:
         if quantidade >= lista[produto_id]:
-          db.deletar_produto_lista_pessoal()
+          db.deletar_produto_lista_pessoal(id_user, produto_id)
         else:
-          db.alterar_produto_lista_pessoal() 
+          db.diminuir_quantidade_produto_lista_pessoal(id_user, produto_id, quantidade)
       else:
         raise RuntimeError("Produto não está na lista pessoal")
     except RuntimeError:
@@ -57,6 +65,7 @@ class Lista(ListaInterface):
           lista_compras[key] = value - disp[key]
         else:
           lista_compras[key] = value
+        lista_compras[key] = lista_compras[key] if lista_compras[key] > 0 else 0
       
       del lista
       del disp

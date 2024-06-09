@@ -1,93 +1,95 @@
-from scripts.interfaces import List, Dict
+from scripts.interfaces import Dict
 from scripts.interfaces import ResidenciaInterface
 from scripts.dispensa import Dispensa
 from scripts.lista import Lista
+from scripts.produto import Produto
 from scripts.Repository import UserRepository
 
 class Residencia(ResidenciaInterface):
   @classmethod
-  def administrador(cls, db: UserRepository, id: int) -> int:
+  def criar_residencia(cls, db: UserRepository, id_admin: int) -> None:
     try:
-      residencia = db.get_residencia(id)
-      return residencia['admin_id']
+      db.registrar_residencia(id_admin)
+      id_residencia = db.buscar_residencia_por_admin(id_admin)
+      cls.adicionar_morador(db, id_residencia, id_admin)
     except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar a residência")
+      raise RuntimeError("Não foi possível criar a residência")
+
 
   @classmethod
-  def moradores(cls, db: UserRepository, id: int) -> List[int]:
+  def excluir_residencia(cls, db: UserRepository, id_residencia: int) -> None:
     try:
-      residencia = db.get_residencia(id)
-      return residencia['moradores']
+      db.deletar_residencia(id_residencia)  
     except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar a residência")
+      raise RuntimeError(f"Não foi possível deletar a residência de id {id_residencia}")
+
 
   @classmethod
-  def lista_geral(cls, db: UserRepository, id: int) -> int:
+  def info_residencia(cls, db: UserRepository, id_residencia: int) -> dict:
     try:
-      residencia = db.get_residencia(id)
-      return residencia['lista_geral_id']
+      return {
+        'id_residencia': db.mostrar_residencia(id_residencia)['id_residencia'],
+        'id_administrador': db.mostrar_residencia(id_residencia)['usuario_adm_id'],
+        'moradores': list(db.mostrar_moradores(id_residencia).keys())
+      }
     except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar a residência")
-
-  @classmethod  
-  def dispensa(cls, db: UserRepository, id: int) -> int:
-    try:
-      residencia = db.get_residencia(id)
-      return residencia['dispensa_id']
-    except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar a residência")
+      raise RuntimeError("Não foi possível obter informações da residência")
 
   @classmethod
-  def adicionar_morador(cls, db: UserRepository, id: int, novo_morador_id: int) -> None:
+  def adicionar_morador(cls, db: UserRepository, id_residencia: int, novo_morador_id: int) -> None:
     try:
-      db.adicionar_usuario_em_residencia(id, novo_morador_id)
+      db.adicionar_morador(id_residencia, novo_morador_id)
     except RuntimeError:
       raise RuntimeError(f"Não foi possível adicionar morador {novo_morador_id} em residência {id}")
 
+
   @classmethod
-  def remover_morador(cls, db: UserRepository, id: int, morador_id: int) -> None:
+  def remover_morador(cls, db: UserRepository, morador_id: int) -> None:
     try:
-      db.remover_usuario_de_residencia(id, morador_id)
+      db.remover_morador(morador_id)
     except RuntimeError:
-      raise RuntimeError(f"Não foi possível remover morador {morador_id} em residência {id}")
-  
+      raise RuntimeError(f"Não foi possível remover morador {morador_id} da residência")
+
+
   @classmethod
-  def adicionar_produto_dispensa(cls, db: UserRepository, id: int, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_dispensa(cls, db: UserRepository, id_residencia: int, produto_id: int, quantidade: int) -> None:
     try:
-      Dispensa.adicionar_produto(db, cls.dispensa(db, id), produto_id, quantidade)
+      Dispensa.adicionar_produto(db, id_residencia, produto_id, quantidade)
     except RuntimeError:
       raise RuntimeError("Não foi possível adicionar produto na dispensa")
 
+
   @classmethod
-  def remover_produto_dispensa(cls, db: UserRepository, id: int, produto_id: int, quantidade: int) -> None:
+  def remover_produto_dispensa(cls, db: UserRepository, id_residencia: int, produto_id: int, quantidade: int) -> None:
     try:
-      Dispensa.remover_produto(db, cls.dispensa(db, id), produto_id, quantidade)
+      Dispensa.remover_produto(db, id_residencia, produto_id, quantidade)
     except RuntimeError:
       raise RuntimeError("Não foi possível remover produto da dispensa")
 
-  @classmethod
-  def adicionar_produto_lista_geral(cls, db: UserRepository, id: int, produto_id: int, quantidade: int) -> None:
-    try:
-      Lista.adicionar_produto(db, cls.lista_geral(db, id), produto_id, quantidade)
-    except RuntimeError:
-      raise RuntimeError("Não foi possível adicionar produto a lista geral")
-
-  @classmethod
-  def remover_produto_lista_geral(cls, db: UserRepository, id: int, produto_id: int, quantidade: int) -> None:
-    try:
-      Lista.remover_produto(db, cls.lista_geral(db, id), produto_id, quantidade)
-    except RuntimeError:
-      raise RuntimeError("Não foi possível adicionar produto a lista geral")
 
   @classmethod
   def lista_compras(cls, db: UserRepository, id_residencia: int) -> Dict[str, int]:
     try:
-      moradores = cls.moradores(db, id_residencia)
+      moradores = cls.info_residencia(db, id_residencia)['moradores']
     except RuntimeError:
-      moradores = []
-    
-    lista_compras = {}
-    for morador in moradores:
-      pass
-    
-    return lista_compras
+      raise RuntimeError("Não foi possível obter informações sobre a residência")
+
+    lista_compras_id = {}
+    try:
+      for morador in moradores:
+        lista = Lista.obter_lista_compras(db, morador, id_residencia)
+        for key, value in lista.items():
+          if key in lista_compras_id:
+            lista_compras_id[key] += value
+          else:
+            lista_compras_id[key] = value
+      
+      lista_compras = {}
+      for key, value in lista_compras_id.items():
+        produto_info = Produto.get_info(db, key)
+        produto = f"{produto_info['nome']} - {produto_info['quantidade_unidade']}"
+        lista_compras[produto] = value
+
+      return lista_compras
+    except RuntimeError:
+      raise RuntimeError("Não foi possível obter a lista de compras")
