@@ -21,10 +21,18 @@ class Usuario(UsuarioInterface):
       if len(validar_email) == 2:
         if len(validar_email[1].split('.')) in (2, 3):
           db.registrar_usuario(nome, email, senha)
-      
-      raise RuntimeError("Email de cadastro inválido")
+      else:
+        raise RuntimeError("Email de cadastro inválido")
+    
     except RuntimeError as erro:
       raise erro
+    
+  @classmethod
+  def excluir_usuario(cls, db: UserRepository, id_usuario: int) -> None:
+    try:
+      db.deletar_usuario(id_usuario)
+    except RuntimeError:
+      raise RuntimeError(f"Não foi possível exluir o usuário de id {id_usuario}")
   
   def __init__(self, nome: str, email: str, senha: str, id_usuario: int, id_residencia: int, db: UserRepository) -> None:
     self.__nome = nome
@@ -124,10 +132,7 @@ class Administrador(Usuario):
     id_usuario = atributos['id_usuario']
     id_residencia = atributos['residencia_id']
     
-    if db.buscar_residencia_por_admin(id_usuario):
-      return cls(nome, email, senha, id_usuario, id_residencia, db)
-    else:
-      return Usuario.carregar_usuario(atributos, db)
+    return cls(nome, email, senha, id_usuario, id_residencia, db)
   
   def __init__(self, nome: str, email: str, senha: str, residencia_id: int, db: UserRepository) -> None:
     super().__init__(nome, email, senha, residencia_id, db)

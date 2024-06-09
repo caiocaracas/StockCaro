@@ -53,6 +53,10 @@ class UsuarioInterface(ABC):
   @abstractmethod
   def salvar_usuario(cls, db: Type["BaseRepository"], nome: str, email: str, senha: str) -> None:
     pass
+  
+  @abstractmethod
+  def excluir_usuario(cls, db: Type["BaseRepository"], id_usuario: int) -> None:
+    pass
 
   @abstractmethod
   def autenticar(self, email: str, senha: str) -> bool:
