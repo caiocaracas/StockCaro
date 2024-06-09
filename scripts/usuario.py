@@ -40,10 +40,10 @@ class Usuario(UsuarioInterface):
         self.__email = novo_email
 
   @property
-  def _senha(self) -> str:
+  def senha(self) -> str:
     return self.__senha
 
-  @_senha.setter
+  @senha.setter
   def senha(self, nova_senha: str) -> None:
     self.__senha = nova_senha
 
@@ -75,9 +75,9 @@ class Usuario(UsuarioInterface):
     return email == self.email and senha == self.senha
   
   def alterar_senha(self, antiga_senha: str, nova_senha: str) -> None:
-    if antiga_senha == self._senha:
+    if antiga_senha == self.senha:
       self.__db.alterar_senha(self.id, nova_senha)
-      self._senha = nova_senha
+      self.__senha = nova_senha
 
   def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
     try:

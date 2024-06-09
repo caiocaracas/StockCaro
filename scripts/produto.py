@@ -8,60 +8,53 @@ from scripts.Repository import UserRepository
 
 class Produto(ProdutoInterface):
   @classmethod
-  def criar_produto(cls, db: UserRepository, id_residencia: int, nome: str) -> None:
+  def criar_produto(cls, db: UserRepository, id_residencia: int, nome: str, quantidade: int, unid_medida: str = None, categoria: str = None) -> None:
     try:
-      db.registrar_produto_residencia(id_residencia, nome)
+      db.registrar_produto_residencia(id_residencia, nome, quantidade, unid_medida, categoria)
     except RuntimeError:
       raise RuntimeError("Não foi possível cadastrar o produto")
   
   @classmethod
-  def get_nome_produto(cls, db: UserRepository, id_produto: int, id_residencia: int) -> str:
+  def deletar_produto(cls, db: UserRepository, id_produto: int) -> None:
     try:
-      # db.mostar_produto_da_residencia(id_residencia)
-      pass
+      db.deletar_produto_residencia(id_produto)
     except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar o produto")
-  
-  @classmethod
-  def set_nome_produto(cls, db: UserRepository, id: int, novo_nome: str) -> None:
-    try:
-      db.set_produto(id, propriedade="nome", valor=novo_nome)
-    except RuntimeError:
-      raise RuntimeError("Não foi possível modificar o produto")
-  
-  @classmethod
-  def get_preco(cls, db: UserRepository, id: int) -> float:
-    try:
-      produto = db.get_produto(id)
-      return float(produto['preco'])
-    except RuntimeError:
-      raise RuntimeError("Não foi possível encontrar o produto")
-  
-  @classmethod
-  def set_preco(cls, db: UserRepository, id: int, novo_preco: float) -> None:
-    try:
-      db.set_produto(id, propriedade="preco", valor=novo_preco)
-    except RuntimeError:
-      raise RuntimeError("Não foi possível modificar o produto")
+      raise RuntimeError(f"Não foi possivel deletar o produto de id {id_produto}")
 
   @classmethod
-  def pertence(cls, db: UserRepository, id: int) -> List[int]:
+  def get_nome_produto(cls, db: UserRepository, id_produto: int) -> str:
     try:
-      produto = db.get_produto(id)
-      return produto['pertence']
+      produto = db.mostrar_produto_da_residencia(id_produto)
+      return produto['nome']
+    except RuntimeError:
+      raise RuntimeError("Não foi possível encontrar o produto")
+  
+  @classmethod
+  def get_preco(cls, db: UserRepository, id_produto: int) -> float:
+    try:
+      produto = db.mostrar_produto_da_residencia(id_produto)
+      return produto['preco_medio']
     except RuntimeError:
       raise RuntimeError("Não foi possível encontrar o produto")
 
   @classmethod
-  def adicionar_usuario(cls, db: UserRepository, id: int, novo_usuario: int) -> None:
+  def pertence(cls, db: UserRepository, id_produto: int) -> List[int]:
     try:
-      db.adicionar_usuario_em_produto(id_produto=id, id_usuario=novo_usuario)
+      users = db.mostrar_usuarios_consomem_certo_produto(id_produto)
+      return list(users.keys())
+    except RuntimeError:
+      raise RuntimeError("Não foi possível encontrar o produto")
+
+  @classmethod
+  def adicionar_usuario(cls, db: UserRepository, id_produto: int, novo_usuario: int) -> None:
+    try:
+      db.registrar_usuario_consumidor_de_um_produto(id_produto, novo_usuario)
     except RuntimeError:
       raise RuntimeError("Não foi possível adicionar usuario na lista de produto")
   
   @classmethod
-  def remover_usuario(cls, db: UserRepository, id: int, usuario: int) -> None:
+  def remover_usuario(cls, db: UserRepository, id_produto: int, usuario: int) -> None:
     try:
-      db.deletar_usuario_que_consome_um_produto(id, usuario)
+      db.deletar_usuario_que_consome_um_produto(id_produto, usuario)
     except RuntimeError:
       raise RuntimeError("Não foi possível adicionar usuario na lista de produto")
