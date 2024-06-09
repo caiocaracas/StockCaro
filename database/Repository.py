@@ -98,15 +98,15 @@ class UserRepository(BaseRepository):
         except mysql.connector.Error as err:
             raise RuntimeError(f"Erro ao verificar se a compra de ID {id_compra} existe no banco: {str(err)}")
     
-    def __verificar_se_divida_existe(self, id_divida: int) -> bool:
-        query = "SELECT 1 FROM dividas WHERE id_divida = %s;"
+    def __verificar_se_transferencia_existe(self, id_transferencia: int) -> bool:
+        query = "SELECT 1 FROM transferencias WHERE id_transferencia = %s;"
         try:
             cursor = self.database.cursor
-            cursor.execute(query, (id_divida,))
+            cursor.execute(query, (id_transferencia,))
             result = cursor.fetchone()
             return bool(result)
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Erro ao verificar se divida de ID {id_divida} existe no banco: {str(err)}")
+            raise RuntimeError(f"Erro ao verificar se transferencia de ID {id_transferencia} existe no banco: {str(err)}")
   
     def __verificar_se_usuario_tem_residencia(self, id_usuario:int) -> bool:
         query = "SELECT 1 FROM usuarios WHERE (id_usuario = %s AND residencia_id IS NOT NULL);"
@@ -128,26 +128,16 @@ class UserRepository(BaseRepository):
         except mysql.connector.Error as err:
             raise RuntimeError(f"Erro ao verificar se produto listado de ID {id_produto_listado} existe no banco: {str(err)}")
     
-    def __verificar_se_produto_dispensa_existe(self, id_produto_dispensa: int) -> bool:
-        query = "SELECT 1 FROM produtos_dispensas WHERE id_produto_dispensa = %s;"
+    def __verificar_se_produto_dispensa_existe(self, produto_residencia_id: int) -> bool:
+        query = "SELECT 1 FROM produtos_residencia WHERE id_produto_residencia = %s and quantidade_existente != '0';"
         try:
             cursor = self.database.cursor
-            cursor.execute(query, (id_produto_dispensa,))
+            cursor.execute(query, (produto_residencia_id,))
             result = cursor.fetchone()
             return bool(result)
         except mysql.connector.Error as err:
-            raise RuntimeError(f"Erro ao verificar se produto na dispensa de ID {id_produto_dispensa} existe no banco: {str(err)}")
+            raise RuntimeError(f"Erro ao verificar se produto na dispensa de ID {produto_residencia_id} existe no banco: {str(err)}")
 
-    def __verificar_se_produto_residencia_e_usuario_existe(self, id_produto_residencia: int, id_usuario:int) -> bool:
-        query = "SELECT 1 FROM produtos_residencia__usuarios WHERE (produto_residencia_id = %s AND usuario_id = %s);"
-        try:
-            cursor = self.database.cursor
-            cursor.execute(query, (id_produto_residencia, id_usuario))
-            result = cursor.fetchone()
-            return bool(result)
-        except mysql.connector.Error as err:
-            raise RuntimeError(f"Erro ao verificar se o usuario de ID {id_usuario} usa o produto de ID {id_produto_residencia}: {str(err)}")
-    
     def login(self, email: str) -> dict:
             query = "SELECT * FROM usuarios WHERE email = %s;"
             try:
@@ -319,80 +309,6 @@ class UserRepository(BaseRepository):
                return {}
         else:
              raise RuntimeError(f"ERRO: a residencia de ID {id_residencia} não existe")
-    
-    def adicionar_produto_lista_geral(self, id_produto_residencia, residencia_id, quantidade):
-        query = "INSERT INTO produtos_listados_gerais (produto_residencia_id, residencia_id, quantidade_listada) VALUES (%s, %s, %s);"
-        try:
-            self.database.cursor.execute(query, (id_produto_residencia, residencia_id, quantidade))
-            self.database.connection.commit()
-        except mysql.connector.Error as err:
-            raise RuntimeError(f"Erro ao registrar produto na lista pessoal de ID {residencia_id}: {str(err)}")
-            
-    # Pre_condição - produto listado referente ao metodo tem que existir
-    def deletar_produto_lista_geral(self, id_produto_listado):
-        if self.__verificar_se_produto_listado_pessoal_existe(id_produto_listado):
-            query = "DELETE FROM produtos_listados_pessoais WHERE id_produto_listado_pessoal = %s;"
-            try:
-                cursor = self.database.cursor
-                cursor.execute(query, (id_produto_listado,))
-                self.database.connection.commit()
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao deletar o produto listado de ID {id_produto_listado}: {str(err)}")
-        else:
-            raise RuntimeError(f"ERRO: o produto listado de ID {id_produto_listado} não existe")
-    
-    # Pre_condição - usuario referente ao metodo tem que existir
-    def mostrar_produtos_lista_geral(self, id_usuario: int) -> dict:
-        if self.__verificar_se_usuario_existe(id_usuario):
-            query = '''
-            SELECT id_produto_listado_pessoal, id_produto_residencia, residencia_id, usuario_id, quantidade_listada, nome, quantidade_unid, unidade_de_medida, categoria, preco_medio
-            FROM produtos_listados_pessoais
-            INNER JOIN produtos_residencia 
-            ON produtos_listados_pessoais.produto_residencia_id = produtos_residencia.id_produto_residencia
-            WHERE usuario_id = %s; '''
-            try:
-                cursor = self.database.cursor
-                cursor.execute(query, (id_usuario,))
-                consulta = cursor.fetchall() # list[list[atributo]]
-                if consulta:
-                    columns = [desc[0] for desc in cursor.description] # Lista dos nomes das colunas da tabela
-                    lista_dicionario = [dict(zip(columns, row)) for row in consulta] # lista das informaçoes dos produtos em forma de lista de dicionarios
-                    lista_de_ids = ([(dict['id_produto_residencia']) for dict in lista_dicionario])# Lista com o id de cada produto da consulta
-                    result = dict(zip(lista_de_ids, lista_dicionario)) # dicionario com chaves sendo os ids e os valores sendo um dicionario que representa as informações do produto
-                    return result #row = result[i] # Combina os valores dos id com os valores da linha
-                else: 
-                    return {}
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao mostrar produtos listados do usuário: {str(err)}")
-                
-        else:
-            raise RuntimeError(f"ERRO: o usuario de ID {id_usuario} não existe")
-
-    # Pre-condição: um registro não pode ser duplicado
-    def registrar_usuario_consumidor_de_um_produto(self, id_produto_residencia:int, id_usuario:int) -> None:
-        if not self.__verificar_se_produto_residencia_e_usuario_existe(id_produto_residencia, id_usuario):
-            query = "INSERT INTO produtos_residencia__usuarios (produto_residencia_id, usuario_id) VALUES (%s, %s);"
-            try:
-                self.database.cursor.execute(query, (id_produto_residencia, id_usuario))
-                self.database.connection.commit()
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"ERRO: erro ao registrar um produto: {str(err)}")
-
-        else:
-            raise RuntimeError(f"ERRO: erro ao registrar consumidor de um produto, o usuario de ID {id_usuario} ou produto de ID {id_produto_residencia} não existem")
-    
-    # Pre_condição - produto da residencia e usuario referente ao metodo tem que existir
-    def deletar_usuario_que_consome_um_produto(self, id_produto_residencia:int, id_usuario:int):
-        query = "DELETE FROM produtos_residencia__usuarios WHERE  produto_residencia_id = %s AND usuario_id = %s;"
-        if self.__verificar_se_produto_residencia_e_usuario_existe(id_produto_residencia, id_usuario):
-            try:
-               cursor = self.database.cursor
-               cursor.execute(query, (id_produto_residencia, id_usuario))
-               self.database.connection.commit()
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao deletar registro do usuario de ID {id_usuario} de consumir o produto {id_produto_residencia}: {str(err)}")
-        else:
-            raise RuntimeError(f"ERRO: o usuario de ID {id_usuario} não consome o produto de ID {id_produto_residencia}")
 
     def registrar_produto_residencia(self, id_residencia, nome:str, quantidade:int, unid_medida:str, categoria):
         query = "INSERT INTO produtos_residencia (residencia_id, nome, quantidade_unid, unidade_de_medida, categoria) VALUES (%s, %s, %s, %s, %s )"
@@ -465,17 +381,42 @@ class UserRepository(BaseRepository):
             raise RuntimeError(f"Erro ao registrar produto na lista pessoal de ID {usuario_id}: {str(err)}")
             
     # Pre_condição - produto listado referente ao metodo tem que existir
-    def deletar_produto_lista_pessoal(self, id_produto_listado):
-        if self.__verificar_se_produto_listado_pessoal_existe(id_produto_listado):
-            query = "DELETE FROM produtos_listados_pessoais WHERE id_produto_listado_pessoal = %s;"
+    def deletar_produto_lista_pessoal(self, usuario_id:int, produto_residencia_id:int):
+        if self.__verificar_se_produto_residencia_existe(produto_residencia_id):
+            query = "DELETE FROM produtos_listados_pessoais WHERE usuario_id = %s and produto_residencia_id = $s;"
             try:
                 cursor = self.database.cursor
-                cursor.execute(query, (id_produto_listado,))
+                cursor.execute(query, (usuario_id, produto_residencia_id))
                 self.database.connection.commit()
             except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao deletar o produto listado de ID {id_produto_listado}: {str(err)}")
+                raise RuntimeError(f"Erro ao deletar o produto listado de ID {produto_residencia_id}: {str(err)}")
         else:
-            raise RuntimeError(f"ERRO: o produto listado de ID {id_produto_listado} não existe")
+            raise RuntimeError(f"ERRO: o produto listado de ID {produto_residencia_id} não existe")
+    
+    
+    def aumentar_quantidade_produto_dispensa(self, usuario_id:int, produto_residencia_id:int, quantidade_adicionada:int):
+        if self.__verificar_se_produto_residencia_existe(produto_residencia_id):
+            query = "UPDATE produtos_listados_pessoais SET quantidade_existente = quantidade_existente + %s WHERE id_produto_residencia = %s and usuario_id = %s;"
+            try:
+                cursor = self.database.cursor
+                cursor.execute(query, (quantidade_adicionada, produto_residencia_id, usuario_id))
+                self.database.connection.commit()
+            except mysql.connector.Error as err:
+                raise RuntimeError(f"Erro adicionar quantidade de um produto de ID {produto_residencia_id} na lista {str(err)}")
+        else:
+            raise RuntimeError(f"ERRO: ao aumentar a quantiade de um produto na lista, o produto de ID {produto_residencia_id} não existe")
+    
+    def diminuir_quantidade_produto_dispensa(self, usuario_id:int, produto_residencia_id:int, quantidade_adicionada:int):
+        if self.__verificar_se_produto_residencia_existe(produto_residencia_id):
+            query = "UPDATE produtos_listados_pessoais SET quantidade_existente = quantidade_existente +- %s WHERE id_produto_residencia = %s and usuario_id = %s;"
+            try:
+                cursor = self.database.cursor
+                cursor.execute(query, (quantidade_adicionada, produto_residencia_id, usuario_id))
+                self.database.connection.commit()
+            except mysql.connector.Error as err:
+                raise RuntimeError(f"Erro adicionar diminuir de um produto de ID {produto_residencia_id} na lista {str(err)}")
+        else:
+            raise RuntimeError(f"ERRO: ao diminuir a quantiade de um produto na lista, o produto de ID {produto_residencia_id} não existe")
     
     # Pre_condição - usuario referente ao metodo tem que existir
     def mostrar_produtos_lista_pessoal(self, id_usuario: int) -> dict:
@@ -503,54 +444,6 @@ class UserRepository(BaseRepository):
                 
         else:
             raise RuntimeError(f"ERRO: o usuario de ID {id_usuario} não existe")
-    
-    # Pre-condição: um registro não pode ser duplicado
-    def registrar_usuario_consumidor_de_um_produto(self, id_produto_residencia:int, id_usuario:int) -> None:
-        if not self.__verificar_se_produto_residencia_e_usuario_existe(id_produto_residencia, id_usuario):
-            query = "INSERT INTO produtos_residencia__usuarios (produto_residencia_id, usuario_id) VALUES (%s, %s);"
-            try:
-                self.database.cursor.execute(query, (id_produto_residencia, id_usuario))
-                self.database.connection.commit()
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"ERRO: erro ao registrar um produto: {str(err)}")
-
-        else:
-            raise RuntimeError(f"ERRO: erro ao registrar consumidor de um produto, o usuario de ID {id_usuario} ou produto de ID {id_produto_residencia} não existem")
-    
-    # Pre_condição - produto da residencia e usuario referente ao metodo tem que existir
-    def deletar_usuario_que_consome_um_produto(self, id_produto_residencia:int, id_usuario:int):
-        query = "DELETE FROM produtos_residencia__usuarios WHERE  produto_residencia_id = %s AND usuario_id = %s;"
-        if self.__verificar_se_produto_residencia_e_usuario_existe(id_produto_residencia, id_usuario):
-            try:
-               cursor = self.database.cursor
-               cursor.execute(query, (id_produto_residencia, id_usuario))
-               self.database.connection.commit()
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao deletar registro do usuario de ID {id_usuario} de consumir o produto {id_produto_residencia}: {str(err)}")
-        else:
-            raise RuntimeError(f"ERRO: o usuario de ID {id_usuario} não consome o produto de ID {id_produto_residencia}")
-    
-    # Pre_condição - produto da residencia referente ao metodo tem que existir
-    def mostrar_usuarios_consomem_certo_produto(self, id_produto_residencia: int) -> dict:
-        if self.__verificar_se_produto_residencia_existe(id_produto_residencia):
-            query = '''SELECT * FROM usuarios WHERE id_usuario IN (
-                SELECT usuario_id FROM produtos_residencia__usuarios WHERE produto_residencia_id = %s);'''
-            try:
-                self.database.cursor.execute(query, (id_produto_residencia,))
-                consulta = self.database.cursor.fetchall() # list[list[atributo]]
-                if consulta:
-                    columns = [desc[0] for desc in self.database.cursor.description] # Lista dos nomes das colunas da tabela
-                    lista_dicionario = [dict(zip(columns, row)) for row in consulta] # lista das informaçoes dos produtos em forma de lista de dicionarios
-                    lista_de_ids = ([(dict['id_produto_residencia']) for dict in lista_dicionario])# Lista com o id de cada produto da consulta
-                    result = dict(zip(lista_de_ids, lista_dicionario)) # dicionario com chaves sendo os ids e os valores sendo um dicionario que representa as informações do produto
-                    return result #row = result[i] # Combina os valores dos id com os valores da linha
-                else:
-                    return {}
-            except mysql.connector.Error as err:
-                raise RuntimeError(f"Erro ao mostrar usuários que consomem certo produto: {str(err)}")
-                return {}
-        else:
-            raise RuntimeError(f"ERRO: o produto residencia de ID {id_produto_residencia} não existe")
     
     # Pre_condição - usuario referente ao metodo tem que existir e ele tem que estar em ua residencia
     def registrar_compra(self, id_usuario: int, supermercado: str) -> bool:
@@ -641,14 +534,6 @@ class UserRepository(BaseRepository):
                 raise RuntimeError(f"Erro ao mostrar produtos de uma compra: {str(err)}")
         else:
             raise RuntimeError(f"ERRO: a compra de ID {id_compra} não existe")
-        
-    def adicionar_produto_na_dispensa(self, id_produto_comprado:int, quantidade:int) ->bool:
-        query = "INSERT INTO produtos_dispensas (produto_comprado_id, quantidade_existente) VALUES (%s, %s);"
-        try:
-            self.database.cursor.execute(query, (id_produto_comprado, quantidade))
-            self.database.connection.commit()
-        except mysql.connector.Error as err:
-            raise RuntimeError(f"Erro ao registrar produto na dispensa: {str(err)}")
    
     # Pre_condição - produto da dispensa referente ao metodo tem que existir 
     def deletar_produto_da_dispensa(self, id_produto_dispensa:int) ->bool:
@@ -713,7 +598,7 @@ class UserRepository(BaseRepository):
         else:
              raise RuntimeError(f"ERRO: a residencia de ID {id_residencia} não existe")
     
-    def registrar_dividas(self, id_compra:int, valor:float, id_usuario_beneficiario:int, id_usuario_pagador:int):
+    def registrar_transferencia(self, id_compra:int, valor:float, id_usuario_beneficiario:int, id_usuario_pagador:int):
        data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
        query = "INSERT INTO dividas (compra_id,valor, beneficiado, pagador, data_divida) VALUES (%s, %s, %s, %s, %s);"
        try:
@@ -723,7 +608,7 @@ class UserRepository(BaseRepository):
            raise RuntimeError(f"Erro ao registrar divida: {str(err)}")
     
     # Pre-condição: a divida tem que existir
-    def registrar_debito(self, id_divida:int):
+    def confirmar_transferencia(self, id_divida:int):
         if self.__verificar_se_divida_existe(id_divida):
             data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             query = f"UPDATE dividas SET data_debito = '{data}' WHERE id_divida = '{id_divida}';"
@@ -732,7 +617,7 @@ class UserRepository(BaseRepository):
         else:
             raise RuntimeError(f"ERRO: divida de ID {id_divida} não existe no banco") 
         
-    
+    #consultar dividas confirmadas e não confirmadas
     
 '''
 
