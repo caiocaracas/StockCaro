@@ -87,7 +87,7 @@ class UsuarioInterface(ABC):
     pass
 
   @abstractmethod
-  def obter_listas(self) -> Dict[Dict[str, int], float]:
+  def lista(self) -> Dict[str, int]:
     pass
 
   @abstractmethod

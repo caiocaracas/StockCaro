@@ -129,8 +129,8 @@ class GUI:
     """ Lista de Compras """
     tk.Label(self.usuario_frame, text="Lista de Compras").place(x=525, y=55)
 
-    self.lista = tk.Listbox(self.usuario_frame, width=22, height=16, bg="light grey", font=("Times new Roman", 10))
-    self.lista.place(x=505, y=80)
+    self.lista_pessoal = tk.Listbox(self.usuario_frame, width=22, height=16, bg="light grey", font=("Times new Roman", 10))
+    self.lista_pessoal.place(x=505, y=80)
 
     """ Botão de Modfiicar Lista """
     tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, command=self.show_modificar_lista).place(x=500, y=350)
@@ -151,14 +151,6 @@ class GUI:
     tk.Button(self.admin_frame, text="Verificar Dispensa", width=12, height=3, command=self.show_verificar_dispensa ).pack(anchor=tk.W, padx=5, pady=4)
     tk.Button(self.admin_frame, text="Adicionar Morador",  width=12, height=3, command=self.show_adicionar_morador  ).pack(anchor=tk.W, padx=5, pady=4)
     tk.Button(self.admin_frame, text="Configurações",      width=12, height=3, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=4)
-
-    """ Lista de Compras Geral """
-    self.lista_geral = tk.Listbox(self.admin_frame, width=22, height=17, bg="light grey", font=("Times new Roman", 10))
-    self.lista_geral.place(x=350, y=80)
-
-    """ Botão de Modfiicar Lista Pessoal """
-    tk.Label(self.admin_frame, text="Lista Geral").place(x=385, y=55)
-    tk.Button(self.admin_frame, text="Modificar Geral", width=15, height=1, command=self.show_modificar_lista).place(x=345, y=370)
 
     """ Lista de Compras Pessoal """
     self.lista_pessoal = tk.Listbox(self.admin_frame, width=22, height=17, bg="light grey", font=("Times new Roman", 10))
@@ -281,9 +273,9 @@ class GUI:
   def config_screen(self) -> None:
     tk.Label(self.config_frame, text="Informaçoes de Usuário", font=("Haveltica", 15)).pack(side=tk.TOP)
 
-    tk.Label(self.config_frame, text="ID: {ID_USUARIO}", font=("Haveltica", 12)).place(x=15, y=35)
+    tk.Label(self.config_frame, text=f"ID: {self.user.id}", font=("Haveltica", 12)).place(x=15, y=35)
 
-    tk.Label(self.config_frame, text="Email: {Email_USUARIO}", font=("Haveltica", 12)).place(x=15, y=70)
+    tk.Label(self.config_frame, text=f"Email: {self.user.email}", font=("Haveltica", 12)).place(x=15, y=70)
 
     tk.Label(self.config_frame, text="Alterar Senha", font=("Haveltica", 14)).place(x=280, y=130)
 
@@ -335,6 +327,9 @@ class GUI:
 
     self.master.geometry("700x400")
     self.usuario_screen()
+    
+    lista = self.user.lista
+    self.atualizar_lista(self.lista_pessoal, lista)
     self.usuario_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -347,6 +342,10 @@ class GUI:
 
     self.master.geometry("700x420")
     self.admin_screen()
+    
+    lista = self.user.lista
+    self.atualizar_lista(self.lista_pessoal, lista)
+
     self.admin_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -448,12 +447,18 @@ class GUI:
     # carregar informações de usuario
     try:
       info = self.__db.login(username)
-      self.user = Usuario.carregar_usuario(info, self.__db)
+      
+      if self.__db.buscar_residencia_por_admin(info['id_usuario']):
+        self.user = Administrador.carregar_admin(info, self.__db)
+        tela = self.show_admin
+      else:
+        self.user = Usuario.carregar_usuario(info, self.__db)
+        tela = self.show_usuario
     except RuntimeError as erro:
       messagebox.showerror("Erro", erro)  
 
     if self.user.autenticar(username, password):
-      self.show_usuario() 
+      tela() 
     else:
       messagebox.showerror("Usuário não cadastrado", "Senha ou Usuário Incorreto(s)")
 
@@ -484,7 +489,7 @@ class GUI:
     
     if isinstance(nova_lista, dict):
       for item, quantidade in nova_lista.items():
-        lista.insert(tk.END, [item, quantidade])
+        lista.insert(tk.END, f"{quantidade} x {item}")
     elif isinstance(nova_lista, list):
       for item in nova_lista:
         lista.insert(tk.END, item)
@@ -592,7 +597,7 @@ class GUI:
       messagebox.showerror("Preencha os campos de senha", "Preencha ambos campos de senha")
       return None
 
-    if senha_atual == "1234":
+    if self.user.alterar_senha(senha_atual, nova_senha):
       messagebox.showinfo("Senha Atualizada", f"Senha atualizada para {nova_senha}")
     else:
       messagebox.showerror("Senha não alterada", "Senha atual incorreta")

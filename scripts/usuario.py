@@ -2,6 +2,7 @@ from typing import Dict
 from scripts.interfaces import UsuarioInterface
 from scripts.Repository import UserRepository
 from scripts.lista import Lista
+from scripts.produto import Produto
 from scripts.residencia import Residencia
 
 class Usuario(UsuarioInterface):
@@ -59,7 +60,7 @@ class Usuario(UsuarioInterface):
     email = novo_email.split('@')
     if len(email) == 2:
       if len(email[1].split('.')) in (2, 3):
-        self.__db.alterar_email(self.id, novo_email)
+        self.database.alterar_email(self.id, novo_email)
         self.__email = novo_email
 
   @property
@@ -74,47 +75,71 @@ class Usuario(UsuarioInterface):
   def residencia(self) -> int:
     return self.__residencia
 
+  @property
+  def database(self) -> UserRepository:
+    return self.__db
+  
+  @property
+  def lista(self) -> dict:
+    try:
+      lista_ids = Lista.obter_lista(self.database, self.id)
+      lista = {}
+      for key, value in lista_ids.items():
+        produto_info = Produto.get_info(self.database, key)
+        produto = f"{produto_info['nome']} - {produto_info['quantidade_unidade']}"
+        lista[produto] = value
+
+      del lista_ids
+      return lista
+    except RuntimeError as erro:
+      raise erro
+
   def autenticar(self, email: str, senha: str) -> bool:
     return email == self.email and senha == self.senha
   
-  def alterar_senha(self, antiga_senha: str, nova_senha: str) -> None:
+  def alterar_senha(self, antiga_senha: str, nova_senha: str) -> bool:
     if antiga_senha == self.senha:
-      self.__db.alterar_senha(self.id, nova_senha)
+      self.database.alterar_senha(self.id, nova_senha)
       self.__senha = nova_senha
+      return True
+    return False
 
   def adicionar_produto_lista(self, novo_produto_id: int, quantidade: int) -> None:
     try:
-      Lista.adicionar_produto(self.__db, self.id, novo_produto_id, quantidade)
+      Lista.adicionar_produto(self.database, self.id, novo_produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
   def remover_produto_lista(self, produto_id: int, quantidade: int) -> None:
     try:
-      Lista.remover_produto(self.__db, self.id, produto_id, quantidade)
+      Lista.remover_produto(self.database, self.id, produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
   def adicionar_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     try:
-      Residencia.adicionar_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+      Residencia.adicionar_produto_dispensa(self.database, produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
   def remover_produto_dispensa(self, produto_id: int, quantidade: int) -> None:
     try:
-      Residencia.remover_produto_dispensa(self.__db, self.residencia, produto_id, quantidade)
+      Residencia.remover_produto_dispensa(self.database, self.residencia, produto_id, quantidade)
     except RuntimeError as erro:
       raise erro
 
-  def dividas(self) -> Dict[str, float]:
-    pass
-
-  def obter_listas(self) -> Dict[Dict[str, int], float]:
-    pass
+  def obter_listas_compra(self) -> Dict[str, int]:
+    try:
+      return Residencia.lista_compras(self.database, self.residencia)
+    except RuntimeError as erro:
+      raise erro
 
   def finalizar_compra(self) -> None:
     pass
 
+  def dividas(self) -> Dict[str, float]:
+    pass
+  
   def quitar_dividas(self) -> None:
     pass
 
@@ -125,7 +150,7 @@ class Usuario(UsuarioInterface):
 
 class Administrador(Usuario):
   @classmethod
-  def carregar_usuario(cls, atributos: dict, db: UserRepository) -> 'Administrador':
+  def carregar_admin(cls, atributos: dict, db: UserRepository) -> 'Administrador':
     nome = atributos['nome']
     email = atributos['email']
     senha = atributos['senha']
@@ -134,17 +159,17 @@ class Administrador(Usuario):
     
     return cls(nome, email, senha, id_usuario, id_residencia, db)
   
-  def __init__(self, nome: str, email: str, senha: str, residencia_id: int, db: UserRepository) -> None:
-    super().__init__(nome, email, senha, residencia_id, db)
+  def __init__(self, nome: str, email: str, senha: str, id_usuario: int, residencia_id: int, db: UserRepository) -> None:
+    super().__init__(nome, email, senha, id_usuario, residencia_id, db)
 
   def adicionar_morador(self, morador_id: int) -> None:
     try:
-      Residencia.adicionar_morador(self.__db, self.residencia, morador_id)
+      Residencia.adicionar_morador(self.database, self.residencia, morador_id)
     except RuntimeError as erro:
       raise erro
 
   def remover_morador(self, morador_id: int) -> None:
     try:
-      Residencia.remover_morador(self.__db, self.residencia, morador_id)
+      Residencia.remover_morador(self.database, morador_id)
     except RecursionError as erro:
       raise erro

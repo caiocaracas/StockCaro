@@ -52,9 +52,9 @@ class Residencia(ResidenciaInterface):
 
 
   @classmethod
-  def adicionar_produto_dispensa(cls, db: UserRepository, id_residencia: int, produto_id: int, quantidade: int) -> None:
+  def adicionar_produto_dispensa(cls, db: UserRepository, produto_id: int, quantidade: int) -> None:
     try:
-      Dispensa.adicionar_produto(db, id_residencia, produto_id, quantidade)
+      Dispensa.adicionar_produto(db, produto_id, quantidade)
     except RuntimeError:
       raise RuntimeError("Não foi possível adicionar produto na dispensa")
 
@@ -77,18 +77,25 @@ class Residencia(ResidenciaInterface):
     lista_compras_id = {}
     try:
       for morador in moradores:
-        lista = Lista.obter_lista_compras(db, morador, id_residencia)
+        lista = Lista.obter_lista(db, morador)
         for key, value in lista.items():
           if key in lista_compras_id:
             lista_compras_id[key] += value
           else:
             lista_compras_id[key] = value
       
+      estoque = Dispensa.estoque(db, id_residencia)
       lista_compras = {}
       for key, value in lista_compras_id.items():
         produto_info = Produto.get_info(db, key)
         produto = f"{produto_info['nome']} - {produto_info['quantidade_unidade']}"
-        lista_compras[produto] = value
+        if key in estoque:
+          lista_compras[produto] = value - estoque[key]
+        else:
+          lista_compras[produto] = value
+
+      del estoque
+      del lista_compras_id
 
       return lista_compras
     except RuntimeError:

@@ -1,12 +1,13 @@
-from scripts.usuario import UsuarioComum, Administrador
-from scripts.lista import ListaGeral, ListaPessoal
-from scripts.produto import ProdutoGeral, ProdutoPessoal
-from scripts.dispensa import Dispensa
-from scripts.residencia import Residencia
-
+from scripts.GUI import GUI
+from scripts.Repository import Database, UserRepository
 
 def main():
-  pass
+  database = Database("localhost", "root", "gpires10", "gerenciador_mercado")
+  db = UserRepository(database)
+
+  interface = GUI(db)
+
+  interface.master.mainloop()
 
 
 if __name__ == "__main__":
