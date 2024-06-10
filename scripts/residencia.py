@@ -74,28 +74,23 @@ class Residencia(ResidenciaInterface):
     except RuntimeError:
       raise RuntimeError("Não foi possível obter informações sobre a residência")
 
-    lista_compras_id = {}
+    lista_compras = {}
     try:
       for morador in moradores:
         lista = Lista.obter_lista(db, morador)
         for key, value in lista.items():
-          if key in lista_compras_id:
-            lista_compras_id[key] += value
+          if key in lista_compras:
+            lista_compras[key] += value
           else:
-            lista_compras_id[key] = value
+            lista_compras[key] = value
       
       estoque = Dispensa.estoque(db, id_residencia)
-      lista_compras = {}
-      for key, value in lista_compras_id.items():
-        produto_info = Produto.get_info(db, key)
-        produto = f"{produto_info['nome']} - {produto_info['quantidade_unidade']}"
-        if key in estoque:
-          lista_compras[produto] = value - estoque[key]
-        else:
-          lista_compras[produto] = value
+      
+      for key, value in estoque.items():
+        if key in lista_compras:
+          lista_compras[key] -= value
 
       del estoque
-      del lista_compras_id
 
       return lista_compras
     except RuntimeError:

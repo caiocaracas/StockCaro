@@ -56,6 +56,7 @@ class GUI:
     """ Realizar Compra """
     self.realizar_compra_frame = tk.Frame(self.master)
     self.frames.append(self.realizar_compra_frame)
+    self.compras = {}
 
     """ Adicionar Morador """
     self.adicionar_morador_frame = tk.Frame(self.master)
@@ -234,7 +235,14 @@ class GUI:
     tk.Label(self.verificar_dividas_frame, text="Divídas", font=("Haveltica", 16)).place(x=300, y=10)
 
     self.lista_dividas = tk.Listbox(self.verificar_dividas_frame, width=28, height=15)
-    self.lista_dividas.place(x=225, y=50)
+    self.lista_dividas.place(x=50, y=50)
+
+    tk.Button(self.verificar_dividas_frame, text="Quitar Divída", width=12, height=1, command=self.quitar_divida).place(x=330, y=295)
+
+    self.lista_pendentes = tk.Listbox(self.verificar_dividas_frame, width=25, height=4)
+    self.lista_pendentes.place(x=420, y=50)
+
+    tk.Button(self.verificar_dividas_frame, text="Confirmar Quitação", width=15, height=1, command=self.confirmar_quitacao).place(x=450, y=135)
     
     tk.Button(self.verificar_dividas_frame, text="Confirmar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
 
@@ -252,7 +260,25 @@ class GUI:
 
 
   def realizar_compra_screen(self) -> None:
-    tk.Button(self.realizar_compra_frame, text="Confirmar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
+    tk.Label(self.realizar_compra_frame, text="Realizar Compra", font=("Haveltica", 16)).pack(side=tk.TOP)
+    
+    self.lista_compras = tk.Listbox(self.realizar_compra_frame, width=18, height=18)
+    self.lista_compras.place(x=15, y=25)
+
+    tk.Label(self.realizar_compra_frame, text="Quantidade Comprada", font=("Haveltica", 11)).place(x=220, y=70)
+    self.quantidade_comprada = tk.Entry(self.realizar_compra_frame, width=8)
+    self.quantidade_comprada.place(x=400, y=68)
+
+    tk.Label(self.realizar_compra_frame, text="Valor Total do Produto", font=("Haveltica", 11)).place(x=220, y=110)
+    self.valor_compra_produto = tk.Entry(self.realizar_compra_frame, width=8)
+    self.valor_compra_produto.place(x=400, y=108)
+
+    self.lista_compras_inseridas = tk.Listbox(self.realizar_compra_frame, width=18, height=6)
+    self.lista_compras_inseridas.place(x=500, y=200)
+
+    tk.Button(self.realizar_compra_frame, text="Adicionar Produto a Compra", width=20, height=1, command=self.adicionar_produto_compra).place(x=260, y=150)
+    
+    tk.Button(self.realizar_compra_frame, text="Confirmar", width=15, height=1, command=self.confirmar_compra).place(x=270, y=350)
 
 
   def adicionar_morador_screen(self) -> None:
@@ -280,9 +306,16 @@ class GUI:
   def config_screen(self) -> None:
     tk.Label(self.config_frame, text="Informaçoes de Usuário", font=("Haveltica", 15)).pack(side=tk.TOP)
 
-    tk.Label(self.config_frame, text=f"ID: {self.user.id}", font=("Haveltica", 12)).place(x=15, y=35)
+    tk.Label(self.config_frame, text=f"ID: {self.user.id}", font=("Haveltica", 12)).place(x=15, y=25)
 
-    tk.Label(self.config_frame, text=f"Email: {self.user.email}", font=("Haveltica", 12)).place(x=15, y=70)
+    tk.Label(self.config_frame, text=f"Email: {self.user.email}", font=("Haveltica", 12)).place(x=15, y=55)
+
+    tk.Label(self.config_frame, text=f"ID_Residência: {self.user.residencia}", font=("Haveltica", 12)).place(x=15, y=85)
+
+    if isinstance(self.user, Administrador):
+      tk.Button(self.config_frame, text="Excluir Residencia", width=14, height=1, command=self.excluir_residencia).place(x=530, y=35)
+    elif isinstance(self.user, Usuario):
+      tk.Button(self.config_frame, text="Criar Residencia", width=14, height=1, command=self.criar_residencia).place(x=530, y=35)
 
     tk.Label(self.config_frame, text="Alterar Senha", font=("Haveltica", 14)).place(x=280, y=130)
 
@@ -435,6 +468,15 @@ class GUI:
 
     self.master.geometry("700x400")
     self.realizar_compra_screen()
+
+    lista = self.user.obter_listas_compra()
+    lista_produtos = {}
+    for key, value in lista.items():
+      produto = Produto.get_info(self.user.database, key)
+      lista_produtos[produto['nome']] = value
+    del lista
+    self.atualizar_lista(self.lista_compras, lista_produtos)
+
     self.realizar_compra_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -660,7 +702,8 @@ class GUI:
     except RuntimeError as erro:
       messagebox.showerror("Erro", erro)
     self.show_verificar_dispensa()
-  
+
+
   def diminuir_item_dispensa(self) -> None:
     estoque = Dispensa.estoque(self.user.database, self.user.residencia)
     index = self.lista_dispensa.curselection()
@@ -678,6 +721,7 @@ class GUI:
       messagebox.showerror("Erro", erro)
     self.show_verificar_dispensa()
 
+
   def adicionar_morador(self) -> None:
     novo_morador_id = self.id_morador.get()
 
@@ -692,11 +736,62 @@ class GUI:
 
     try:
       if messagebox.askquestion("Adicionar morador", f"Deseka adicionar o morador de id {novo_morador_id} a residencia") == "yes":
-        self.user.adicionar_morador(novo_morador_id)
-        messagebox.showinfo("Sucesso", "Morador adicionado com sucesso")
+        info_morador = self.user.database.buscar_usuario_por_id(novo_morador_id)
+        if not info_morador['residencia_id']:
+          self.user.adicionar_morador(novo_morador_id)
+          messagebox.showinfo("Sucesso", "Morador adicionado com sucesso")
     except RuntimeError as erro:
       messagebox.showerror("Erro", erro)
     self.show_adicionar_morador()
+
+
+  def quitar_divida(self) -> None:
+    pass
+
+  
+  def confirmar_quitacao(self) -> None:
+    pass
+
+
+  def adicionar_produto_compra(self) -> None:
+    indice = self.lista_compras.curselection()
+    quantidade = self.quantidade_comprada.get()
+    valor = self.valor_compra_produto.get()
+
+    if not indice or not quantidade or not valor:
+      messagebox.showerror("Informações Incompletas", "Selecione um item e preencha os campos")
+      return None
+    
+    try:
+      indice = indice[0]
+      quantidade = int(quantidade)
+      valor = float(valor)
+
+      if quantidade <= 0 or valor < 0:
+        raise ValueError
+    except ValueError:
+      messagebox.showerror("Valores Inválidos", "Valores preenchidos inválidos")
+      return None
+    
+    lista_produtos = list(self.user.obter_listas_compra().keys())
+    nova_compra = {'quantidade': quantidade, 'valor': valor}
+    
+    self.compras[lista_produtos[indice]] = nova_compra
+    
+    lista = []
+    for key in list(self.compras.keys()):
+      produto = Produto.get_info(self.user.database, key)['nome']
+      lista.append(f"{quantidade} x {produto} ---> {valor}")
+    
+    self.atualizar_lista(self.lista_compras_inseridas, lista)
+    del lista
+
+
+  def confirmar_compra(self) -> None:
+    self.user.finalizar_compra(self.compras)
+    self.compras = {}
+
+    self.frame_anterior()
 
 
   def alterar_senha(self) -> None:
@@ -711,6 +806,20 @@ class GUI:
       messagebox.showinfo("Senha Atualizada", f"Senha atualizada para {nova_senha}")
     else:
       messagebox.showerror("Senha não alterada", "Senha atual incorreta")
+
+
+  def criar_residencia(self) -> None:
+    if messagebox.askquestion("Criar Residência", "Deseja criar uma nova residência") == "yes":
+      Residencia.criar_residencia(self.user.database, self.user.id)
+      messagebox.showinfo("Residencia criada com sucesso", "A Residência foi criada com sucesso, retornando a tela de login")
+      self.show_login()
+
+  
+  def excluir_residencia(self) -> None:
+    if messagebox.askquestion("Excluir Residência", "Deseja exluir essa residência") == "yes":
+      Residencia.excluir_residencia(self.user.database, self.user.residencia)
+      messagebox.showinfo("Residencia excluída com sucesso", "A Residência foi excluída com sucesso, retornando a tela de login")
+      self.show_login()
 
 
 if __name__ == "__main__":

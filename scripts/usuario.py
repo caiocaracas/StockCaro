@@ -134,8 +134,8 @@ class Usuario(UsuarioInterface):
     except RuntimeError as erro:
       raise erro
 
-  def finalizar_compra(self) -> None:
-    pass
+  def finalizar_compra(self, detalhes_compra: dict) -> None:
+    print(detalhes_compra)
 
   def dividas(self) -> Dict[str, float]:
     pass
