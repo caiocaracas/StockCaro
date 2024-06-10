@@ -135,14 +135,55 @@ class Usuario(UsuarioInterface):
       raise erro
 
   def finalizar_compra(self, detalhes_compra: dict) -> None:
-    print(detalhes_compra)
+    try:
+      print(detalhes_compra)
+    except RuntimeError as erro:
+      raise erro
 
-  def dividas(self) -> Dict[str, float]:
-    pass
+  def dividas(self) -> Dict[int, float]:
+    try:
+      transferencias = self.database.buscar_transferencia(self.id)
   
-  def quitar_dividas(self) -> None:
-    pass
+      divida = {}
+      for transf in transferencias.values():
+        if transf['confirmado'] == 1:
+          
+          if transf['beneficiado_id'] == self.id:
+          
+            if transf['pagador_id'] not in divida:
+              divida[transf['pagador_id']] = -transf['valor']
+            else:
+              divida[transf['pagador_id']] -= transf['valor']
+        
+          elif transf['pagador_id'] == self.id:
+          
+            if transf['beneficiado_id'] not in divida:
+              divida[transf['beneficiado_id']] = transf['valor']
+            else:
+              divida[transf['beneficiado_id']] += transf['valor']
+      
+      return divida
+  
+    except RuntimeError as erro:
+      raise erro
+  
+  def quitar_dividas(self, usuario_referente_divida: int) -> None:
+    try:
+      id_divida = self.database.buscar_transferencia_pendente(self.id, usuario_referente_divida)
+      self.database.confirmar_transferencia(id_divida)
+    except RuntimeError as erro:
+      raise erro
 
+  def emitir_pedido_quitar_divida(self, usuario_referente_divida: int) -> None:
+    try:
+      dividas = self.dividas()
+      if usuario_referente_divida in dividas:
+        if dividas[usuario_referente_divida] < 0:
+          self.database.registrar_transferencia(usuario_referente_divida, self.id,
+                                               -dividas[usuario_referente_divida], False)
+    
+    except RuntimeError as erro:
+      raise erro
 
 """
   Implementação de Administrador

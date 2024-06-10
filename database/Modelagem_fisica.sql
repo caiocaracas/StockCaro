@@ -165,14 +165,16 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- Table `gerenciador_mercado`.`transferencias`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `gerenciador_mercado`.`transferencias` (
-  `id_transferencia` INT NOT NULL,
+  `id_transferencia` INT NOT NULL AUTO_INCREMENT,
   `confirmado` TINYINT(1) NOT NULL,
   `beneficiado_id` INT NOT NULL,
   `pagador_id` INT NOT NULL,
+  `valor` FLOAT NOT NULL,
   PRIMARY KEY (`id_transferencia`),
   INDEX `fk_transferencias_usuarios1_idx` (`beneficiado_id` ASC) VISIBLE,
   INDEX `fk_transferencias_usuarios2_idx` (`pagador_id` ASC) VISIBLE)
 ENGINE = MyISAM
+AUTO_INCREMENT = 6000
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

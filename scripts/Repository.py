@@ -616,25 +616,59 @@ class UserRepository(BaseRepository):
         else:
              raise RuntimeError(f"ERRO: a residencia de ID {id_residencia} não existe")
     
-    def registrar_transferencia(self, id_compra:int, valor:float, id_usuario_beneficiario:int, id_usuario_pagador:int):
-       data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-       query = "INSERT INTO dividas (compra_id,valor, beneficiado, pagador, data_divida) VALUES (%s, %s, %s, %s, %s);"
+    def registrar_transferencia(self, id_usuario_beneficiario:int, id_usuario_pagador:int, valor:float, confirmada: bool) -> None:
+       query = "INSERT INTO transferencias (beneficiado_id, pagador_id, valor, confirmado) VALUES (%s, %s, %s, %s);"
        try:
-           self.database.cursor.execute(query,(id_compra, valor, id_usuario_beneficiario, id_usuario_pagador, data))
+           self.database.cursor.execute(query,(id_usuario_beneficiario, id_usuario_pagador, valor, int(confirmada)) )
            self.database.connection.commit()
        except mysql.connector.Error as err:
            raise RuntimeError(f"Erro ao registrar divida: {str(err)}")
     
-    # Pre-condição: a divida tem que existir
-    def confirmar_transferencia(self, id_divida:int):
-        if self.__verificar_se_divida_existe(id_divida):
-            data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            query = f"UPDATE dividas SET data_debito = '{data}' WHERE id_divida = '{id_divida}';"
-            self.database.cursor.execute(query)
+    def deletar_transferencias(self, id_transferencia: int) -> None:
+        query = "DELETE FROM transferencias WHERE id_transferencia = %s"
+        try:
+            self.database.cursor.execute(query, (id_transferencia,))
             self.database.connection.commit()
-        else:
-            raise RuntimeError(f"ERRO: divida de ID {id_divida} não existe no banco") 
-        
+        except mysql.connector.Error as erro:
+            raise RuntimeError(f"Erro ao deletar transferencia: {erro}")
+    
+    
+    # Pre-condição: a divida tem que existir
+    def confirmar_transferencia(self, id_transferencia: int):
+        query = "UPDATE transferencias SET confirmado = 1 WHERE id_transferencia = %s"
+        try:
+            self.database.cursor.execute(query, (id_transferencia,))
+            self.database.connection.commit()
+        except mysql.connector.Error as erro:
+            raise RuntimeError(f"Erro ao confirmar transferencia: {erro}")
+    
+    def buscar_transferencia(self, id_usuario: int) -> dict:
+        try:
+            query = "SELECT * FROM transferencias WHERE beneficiado_id = %s or pagador_id = %s"
+            self.database.cursor.execute(query, (id_usuario, id_usuario))
+            consulta = self.database.cursor.fetchall()
+            if consulta:
+                columns = [desc[0] for desc in self.database.cursor.description]
+                lista_dicionario = [dict(zip(columns, row)) for row in consulta] 
+                lista_de_ids = ([(dict['id_transferencia']) for dict in lista_dicionario])
+                result = dict(zip(lista_de_ids, lista_dicionario)) 
+                return result
+        except mysql.connector.Error as erro:
+            raise RuntimeError(f"Erro ao buscar transferencia: {erro}")
+    
+    def buscar_transferencia_pendente(self, id_beneficiado: int, id_pagador: int) -> int:
+        query = "SELECT id_transferencia FROM transferencias WHERE confirmado = 0 and beneficiado_id = %s and pagador_id = %s"
+        try:
+            self.database.cursor.execute(query, (id_beneficiado, id_pagador))
+            consulta = self.database.cursor.fetchall()
+            if consulta:
+                return consulta[0][0]
+            else:
+                return None
+        except mysql.connector.Error as erro:
+            raise RuntimeError(f"Erro ao buscar transferencia: {erro}")
+    
+
     #consultar dividas confirmadas e não confirmadas
     
 '''

@@ -1,8 +1,10 @@
 from scripts.GUI import GUI
 from scripts.Repository import Database, UserRepository
 
+senha_root = "senha"
+
 def main():
-  database = Database("localhost", "root", "gpires10", "gerenciador_mercado")
+  database = Database("localhost", "root", senha_root, "gerenciador_mercado")
   db = UserRepository(database)
 
   interface = GUI(db)

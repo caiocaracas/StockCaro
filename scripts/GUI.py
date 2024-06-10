@@ -435,6 +435,25 @@ class GUI:
     self.master.geometry("700x400")
     self.verificar_dividas_screen()
 
+    lista = self.user.dividas()
+    lista_dividas = []
+    for key, value in lista.items():
+      nome = self.user.database.buscar_usuario_por_id(key)['nome']
+      lista_dividas.append(f"{nome} ---> {value}")
+    self.atualizar_lista(self.lista_dividas, lista_dividas)
+
+    if self.user.residencia:
+      moradores = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
+    else:
+      moradores = []
+
+    lista = []
+    for morador in moradores:
+      if self.user.database.buscar_transferencia_pendente(self.user.id, morador):
+        nome = self.user.database.buscar_usuario_por_id(morador)['nome']
+        lista.append(f"{nome} quitou a divída?")
+    self.atualizar_lista(self.lista_pendentes, lista)
+    
     self.verificar_dividas_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -746,12 +765,41 @@ class GUI:
 
 
   def quitar_divida(self) -> None:
-    pass
+    indice = self.lista_dividas.curselection()
+
+    if not indice:
+      messagebox.showerror("ERRO de SELEÇÃO", "Nenhum item selecionado")
+      return None
+    
+    indice = indice[0]
+    try:
+      id_divida = list(self.user.dividas().keys())[indice]
+      if messagebox.askquestion("Confirmar", f"Deseja emitir um pedido de quitação de divida com usuario de id {id_divida}") == "yes":
+        self.user.emitir_pedido_quitar_divida(id_divida)
+        
+    except RuntimeError as erro:
+      messagebox.showerror("ERRO", erro)
+      return None
+    self.show_verificar_dividas()
 
   
   def confirmar_quitacao(self) -> None:
-    pass
+    indice = self.lista_pendentes.curselection()
+    if not indice:
+      messagebox.showerror("ERRO de SELEÇÃO", "Nenhum item selecionado")
+      return None
 
+    indice = indice[0]
+    moradores = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
+    moradores.remove(self.user.id)
+
+    try:
+      if messagebox.askquestion("Confirmação", "Essa divida foi quitada") == "yes":
+        self.user.quitar_dividas(moradores[indice])
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
+      return None
+    self.show_verificar_dividas()
 
   def adicionar_produto_compra(self) -> None:
     indice = self.lista_compras.curselection()
