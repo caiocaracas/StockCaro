@@ -48,7 +48,7 @@ class Residencia(ResidenciaInterface):
     try:
       db.remover_morador(morador_id)
     except RuntimeError:
-      raise RuntimeError(f"Não foi possível remover morador {morador_id} da residência")
+      raise RuntimeError(f"Não foi possível remover morador de id {morador_id} da residência")
 
 
   @classmethod

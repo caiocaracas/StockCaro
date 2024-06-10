@@ -3,6 +3,10 @@ from tkinter import messagebox
 from typing import Union
 from scripts.usuario import Usuario, Administrador
 from scripts.Repository import UserRepository
+from scripts.lista import Lista
+from scripts.produto import Produto
+from scripts.residencia import Residencia
+from scripts.dispensa import Dispensa
 
 class GUI:
   def __init__(self, db: UserRepository) -> None:
@@ -188,10 +192,10 @@ class GUI:
     self.nome_novo_produto = tk.Entry(self.adicionar_produto_frame, width=15)
     self.nome_novo_produto.place(x=130, y=368)
 
-    tk.Label(self.adicionar_produto_frame, text="Preço").place(x=285, y=370)
+    tk.Label(self.adicionar_produto_frame, text="Tipo").place(x=285, y=370)
     
-    self.preco_novo_produto = tk.Entry(self.adicionar_produto_frame, width=10)
-    self.preco_novo_produto.place(x=330, y=368)
+    self.tipo_novo_produto = tk.Entry(self.adicionar_produto_frame, width=10)
+    self.tipo_novo_produto.place(x=330, y=368)
 
     tk.Label(self.adicionar_produto_frame, text="Quantidade").place(x=440, y=370)
 
@@ -220,7 +224,7 @@ class GUI:
     tk.Button(self.modificar_lista_frame, text="Remover", width=5, height=1, command=self.remover_item_lista).place(x=380, y=265)
 
     """ Adicionar Produto """
-    tk.Button(self.modificar_lista_frame, text="Adicionar Novo Produto", width=20, height=2, command=self.show_adicionar_produto).place(x=200, y=340)
+    tk.Button(self.modificar_lista_frame, text="Adicionar Produto", width=20, height=2, command=self.show_adicionar_produto).place(x=200, y=340)
 
     """ Confirmar Alterações """
     tk.Button(self.modificar_lista_frame, text="Confirmar Alterações", width=20, height=2, command=self.frame_anterior).place(x=200, y=400)
@@ -240,6 +244,9 @@ class GUI:
 
     self.lista_dispensa = tk.Listbox(self.verificar_dispensa_frame, width=28, height=15)
     self.lista_dispensa.place(x=225, y=50)
+
+    tk.Button(self.verificar_dispensa_frame, text="+", font=("", 16), width=1, height=1, command=self.aumentar_item_dipensa ).place(x=520, y=290)
+    tk.Button(self.verificar_dispensa_frame, text="-", font=("", 16), width=1, height=1, command=self.diminuir_item_dispensa).place(x=570, y=290)
 
     tk.Button(self.verificar_dispensa_frame, text="Retornar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
 
@@ -358,6 +365,11 @@ class GUI:
 
     self.master.geometry("700x500")
     self.adicionar_produto_screen()
+
+    lista = list(self.user.database.mostrar_produtos_cadastrados_da_residencia(self.user.residencia).values())
+    lista_existentes = [f"{produto['categoria']} -> {produto['nome']}" for produto in lista]
+    
+    self.atualizar_lista(self.lista_produtos_existentes, lista_existentes)
     self.adicionar_produto_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -370,6 +382,13 @@ class GUI:
 
     self.master.geometry("600x450")
     self.modificar_lista_screen()
+    
+    try:
+      lista = self.user.lista
+    except RuntimeError:
+      lista = []
+    self.atualizar_lista(self.lista_modificar, lista)
+
     self.modificar_lista_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -382,6 +401,7 @@ class GUI:
 
     self.master.geometry("700x400")
     self.verificar_dividas_screen()
+
     self.verificar_dividas_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -394,6 +414,15 @@ class GUI:
 
     self.master.geometry("700x400")
     self.verificar_dispensa_screen()
+
+    estoque = Dispensa.estoque(self.user.database, self.user.residencia)
+    itens_dispensa = {}
+    for key, value in estoque.items():
+      itens_dispensa[value] = Produto.get_info(self.user.database, key)['nome']
+
+    del estoque
+    self.atualizar_lista(self.lista_dispensa, itens_dispensa)
+
     self.verificar_dispensa_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -413,11 +442,19 @@ class GUI:
     for frame in self.frames:
       frame.forget()
     
-    for widget in self.adicionar_morador.winfo_children():
+    for widget in self.adicionar_morador_frame.winfo_children():
       widget.destroy()
 
     self.master.geometry("700x400")
     self.adicionar_morador_screen()
+
+    lista_moradores_ids = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
+    usuarios = {}
+    for morador in lista_moradores_ids:
+      if morador != self.user.id:
+        usuarios[morador] = self.user.database.buscar_usuario_por_id(morador)['nome']
+    
+    self.atualizar_lista(self.lista_moradores, usuarios)
     self.adicionar_morador_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -489,7 +526,7 @@ class GUI:
     
     if isinstance(nova_lista, dict):
       for item, quantidade in nova_lista.items():
-        lista.insert(tk.END, f"{quantidade} x {item}")
+        lista.insert(tk.END, f"{quantidade} -> {item}")
     elif isinstance(nova_lista, list):
       for item in nova_lista:
         lista.insert(tk.END, item)
@@ -502,29 +539,36 @@ class GUI:
       messagebox.showerror("Incompleto", "Preencha quantidade e selecione um produto")
       return None
     
-    produto = self.lista_produtos_existentes.get(indice)
+    indice = indice[0]
     try:
       quant = int(self.quantidade_produto_existente.get())
+      lista_produtos = list(self.user.database.mostrar_produtos_cadastrados_da_residencia(self.user.residencia).keys())
+      produto_id = int(lista_produtos[indice])
+
+      del lista_produtos
     except ValueError:
       messagebox.showerror("Qauntidade inválida", "Quantidade deve ser um valor inteiro positivo")
       return None
     
-    if quant < 0:
+    if quant <= 0:
       messagebox.showerror("Qauntidade inválida", "Quantidade deve ser um valor inteiro positivo")
       return None
     
-    messagebox.showinfo("Produto Cadastrado", "Produto Cadastrado com sucesso")
-    print(f"{quant} x {produto}")
+    try:
+      self.user.adicionar_produto_lista(produto_id, quant)
+      messagebox.showinfo("Produto Cadastrado", "Produto Cadastrado com sucesso")
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
 
 
   def adicionar_novo_produto(self) -> None:
-    if not self.nome_novo_produto.get() or not self.preco_novo_produto.get() or not self.quantidade_novo_produto.get():
+    if not self.nome_novo_produto.get() or not self.tipo_novo_produto.get() or not self.quantidade_novo_produto.get():
       messagebox.showerror("Preencha os campos", "Preencha os campos de Novo Produto")
       return None
     
     try:
       nome_produto = self.nome_novo_produto.get()
-      preco = float(self.preco_novo_produto.get())
+      tipo = self.tipo_novo_produto.get()
       quant = int(self.quantidade_novo_produto.get())
     except ValueError:
       messagebox.showerror("Valores Inválidos", "Insira valores do tipo string para Nome, Real para preço e inteiro para quantidade")
@@ -534,8 +578,19 @@ class GUI:
       messagebox.showerror("Qauntidade inválida", "Quantidade deve ser um valor inteiro positivo")
       return None
     
-    messagebox.showinfo("Produto Adicionado", "Novo Produto criado e adicionado com sucesso")
-    print(f"{quant} x {nome_produto}: {preco}")
+    try:
+      Produto.criar_produto(self.user.database, self.user.residencia, nome_produto, None, None, tipo)
+      produtos = list(self.user.database.mostrar_produtos_cadastrados_da_residencia(self.user.residencia).keys())
+      produto_id = produtos[-1]
+      
+      del produtos
+
+      self.user.adicionar_produto_lista(produto_id, quant)
+      messagebox.showinfo("Produto Adicionado", "Novo Produto criado e adicionado com sucesso")
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
+
+    self.show_adicionar_produto()
 
 
   def remover_item_lista(self) -> None:
@@ -548,7 +603,9 @@ class GUI:
     
     try:
       quant = int(quant)
-      produto = self.lista_modificar.get(indice)
+      produto_id = list(Lista.obter_lista(self.user.database, self.user.id).keys())[indice[0]]
+      produto_id = int(produto_id)
+
     except ValueError:
       messagebox.showerror("Valor Inválido", "Quantidade deve ser um valor inteiro")
       return None
@@ -557,13 +614,12 @@ class GUI:
       messagebox.showerror("Valor Inválido", "Quantidade deve ser maior que 0")
       return None
     
-    print(f"Produtos a remover -> {quant} x {produto}")
-
-    self.lista_modificar.delete(indice)
-    if quant < produto[1]:
-      self.lista_modificar.insert(indice, [produto[0], int(produto[1]) - quant])
+    if quant == 0:
+      quant = int(self.lista_modificar.get(indice).split('->')[0][0:-1])
+      print(quant)
     
-    messagebox.showinfo("Produto Removido", "Produto removido com sucesso")
+    self.user.remover_produto_lista(produto_id, quant)
+    self.show_modificar_lista()
 
 
   def remover_morador(self) -> None:
@@ -573,11 +629,54 @@ class GUI:
       messagebox.showerror("Selecione um Morador", "Selecione um morador para remover")
       return None
     
-    morador = self.lista_moradores.get(indice)
-    if messagebox.askquestion("Remover Morador", f"Deseja remover o morador {morador}") == "yes":
-      self.lista_moradores.delete(indice)
-      messagebox.showinfo("Morador Removido", f"{morador} removido com sucesso!")
+    indice = indice[0]
+    moradores = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
+    moradores.remove(self.user.id)
+    morador_id = moradores[indice]
+    del moradores
+    
+    if messagebox.askquestion("Remover Morador", f"Deseja remover o morador de id {morador_id}") == "yes":
+      try:
+        self.user.remover_morador(morador_id)
+        messagebox.showinfo("Operação Realizada com Sucesso", "Usuario removido da residencia")
+      except RuntimeError as erro:
+        messagebox.showerror("Erro", erro)
+    self.show_adicionar_morador()
 
+  
+  def aumentar_item_dipensa(self) -> None:
+    estoque = Dispensa.estoque(self.user.database, self.user.residencia)
+    index = self.lista_dispensa.curselection()
+
+    if not index:
+      messagebox.showerror("Selecione um item", "Nenhum item foi selecionado")
+      return None
+
+    index = index[0]
+    produto_id = list(estoque.keys())[index]
+
+    try:
+      self.user.adicionar_produto_dispensa(produto_id, 1)
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
+    self.show_verificar_dispensa()
+  
+  def diminuir_item_dispensa(self) -> None:
+    estoque = Dispensa.estoque(self.user.database, self.user.residencia)
+    index = self.lista_dispensa.curselection()
+
+    if not index:
+      messagebox.showerror("Selecione um item", "Nenhum item foi selecionado")
+      return None
+
+    index = index[0]
+    produto_id = list(estoque.keys())[index]
+
+    try:
+      self.user.remover_produto_dispensa(produto_id, 1)
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
+    self.show_verificar_dispensa()
 
   def adicionar_morador(self) -> None:
     novo_morador_id = self.id_morador.get()
@@ -586,7 +685,18 @@ class GUI:
       messagebox.showerror("Preencha o campo ID", "Preencha o campo ID")
       return None
     
-    print(f"ID: {novo_morador_id}")
+    try:
+      novo_morador_id = int(novo_morador_id)
+    except ValueError:
+      messagebox.showerror("Valor inválido", "ID é um numero inteiro")
+
+    try:
+      if messagebox.askquestion("Adicionar morador", f"Deseka adicionar o morador de id {novo_morador_id} a residencia") == "yes":
+        self.user.adicionar_morador(novo_morador_id)
+        messagebox.showinfo("Sucesso", "Morador adicionado com sucesso")
+    except RuntimeError as erro:
+      messagebox.showerror("Erro", erro)
+    self.show_adicionar_morador()
 
 
   def alterar_senha(self) -> None:

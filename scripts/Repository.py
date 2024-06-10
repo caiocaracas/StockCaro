@@ -322,6 +322,21 @@ class UserRepository(BaseRepository):
                 return None
         except mysql.connector.Error as erro:
             raise RuntimeError(f"Erro ao buscar residencia: {erro}")
+        
+    def buscar_usuario_por_id(self, id_user: int) -> dict:
+        query = "SELECT nome, email, residencia_id FROM usuarios WHERE id_usuario = %s"
+        try:
+            cursor = self.database.cursor
+            cursor.execute(query, (id_user,))
+            consulta = cursor.fetchall()
+            if consulta:
+                colunas = [descricao[0] for descricao in cursor.description]
+                lista_ids = [dict(zip(colunas, linha)) for linha in consulta]
+                return lista_ids[0]
+            else:
+                return {}
+        except mysql.connector.Error as erro:
+            raise RuntimeError(f"Erro ao buscar usuario: {erro}")
     
     def registrar_produto_residencia(self, id_residencia: int, nome:str, quantidade:int, unid_medida:str, categoria):
         query = "INSERT INTO produtos_residencia (residencia_id, nome, quantidade_unid, unidade_de_medida, categoria) VALUES (%s, %s, %s, %s, %s )"

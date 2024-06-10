@@ -86,7 +86,7 @@ class Usuario(UsuarioInterface):
       lista = {}
       for key, value in lista_ids.items():
         produto_info = Produto.get_info(self.database, key)
-        produto = f"{produto_info['nome']} - {produto_info['quantidade_unidade']}"
+        produto = f"{produto_info['nome']} -- {produto_info['categoria']}"
         lista[produto] = value
 
       del lista_ids
@@ -171,5 +171,5 @@ class Administrador(Usuario):
   def remover_morador(self, morador_id: int) -> None:
     try:
       Residencia.remover_morador(self.database, morador_id)
-    except RecursionError as erro:
+    except RuntimeError as erro:
       raise erro
