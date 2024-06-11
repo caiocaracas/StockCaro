@@ -136,7 +136,17 @@ class Usuario(UsuarioInterface):
 
   def finalizar_compra(self, detalhes_compra: dict) -> None:
     try:
-      print(detalhes_compra)
+      for key, value in detalhes_compra.items():
+        
+        consumidores = self.database.mostrar_usuarios_que_consomem_produto(key)
+        valor_individual = round(value['valor'] / len(consumidores), 2)
+        
+        for consumidor in consumidores:
+          if consumidor != self.id:
+            self.database.registrar_transferencia(consumidor, self.id, valor_individual, True)
+        
+        self.adicionar_produto_dispensa(key, value['quantidade'])
+
     except RuntimeError as erro:
       raise erro
 
