@@ -400,6 +400,21 @@ class UserRepository(BaseRepository):
         else:
             raise RuntimeError(f"ERRO: o produto residência de ID {id_produto_residencia} não existe no banco")
     
+    def mostrar_usuarios_que_consomem_produto(self, id_produto: int) -> list:
+        if self.__verificar_se_produto_residencia_existe(id_produto):
+            query = "SELECT usuario_id, quantidade_listada FROM produtos_listados_pessoais WHERE produto_residencia_id = %s"
+            try:
+                self.database.cursor.execute(query, (id_produto,))
+                consulta = self.database.cursor.fetchall()
+                usuarios = {}
+                for item in consulta:
+                    usuarios[item[0]] = item[1]
+                return usuarios
+            except mysql.connector.Error as erro:
+                raise RuntimeError(f"Não foi possível obter lista: {erro}")
+        else:
+            raise RuntimeError(f"Não foi possível encontrar produto")
+    
     def adicionar_produto_lista_pessoal(self, id_produto_residencia, usuario_id, quantidade):
         query = "INSERT INTO produtos_listados_pessoais (produto_residencia_id, usuario_id, quantidade_listada) VALUES (%s, %s, %s);"
         try:

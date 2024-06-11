@@ -439,7 +439,7 @@ class GUI:
     lista_dividas = []
     for key, value in lista.items():
       nome = self.user.database.buscar_usuario_por_id(key)['nome']
-      lista_dividas.append(f"{nome} ---> {value}")
+      lista_dividas.append(f"{nome} ---> {value:.2f}")
     self.atualizar_lista(self.lista_dividas, lista_dividas)
 
     if self.user.residencia:
@@ -491,8 +491,9 @@ class GUI:
     lista = self.user.obter_listas_compra()
     lista_produtos = {}
     for key, value in lista.items():
-      produto = Produto.get_info(self.user.database, key)
-      lista_produtos[produto['nome']] = value
+      if value > 0:
+        produto = Produto.get_info(self.user.database, key)
+        lista_produtos[produto['nome']] = value
     del lista
     self.atualizar_lista(self.lista_compras, lista_produtos)
 
@@ -771,6 +772,14 @@ class GUI:
       messagebox.showerror("ERRO de SELEÇÃO", "Nenhum item selecionado")
       return None
     
+    selecao = self.lista_dividas.get(indice)
+    valor = float(selecao.split('--->')[1])
+    if valor > 0:
+      del selecao
+      del valor
+      messagebox.showerror("ERRO", "Você não deve dinheiro para abrir uma quitação de divida")
+      return None
+
     indice = indice[0]
     try:
       id_divida = list(self.user.dividas().keys())[indice]
@@ -800,6 +809,7 @@ class GUI:
       messagebox.showerror("Erro", erro)
       return None
     self.show_verificar_dividas()
+
 
   def adicionar_produto_compra(self) -> None:
     indice = self.lista_compras.curselection()
