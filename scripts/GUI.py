@@ -72,7 +72,7 @@ class GUI:
 
   def login_screen(self) -> None:
     """ Username """
-    tk.Label(self.login_frame, text="Usuário:").pack()
+    tk.Label(self.login_frame, text="Email:").pack()
     
     self.entry_username = tk.Entry(self.login_frame)
     self.entry_username.pack()
@@ -316,6 +316,8 @@ class GUI:
       tk.Button(self.config_frame, text="Excluir Residencia", width=14, height=1, command=self.excluir_residencia).place(x=530, y=35)
     elif isinstance(self.user, Usuario):
       tk.Button(self.config_frame, text="Criar Residencia", width=14, height=1, command=self.criar_residencia).place(x=530, y=35)
+      if self.user.residencia:
+        tk.Button(self.config_frame, text="Sair da Residencia", width=14, height=1, command=self.sair_da_residencia).place(x=530, y=75)
 
     tk.Label(self.config_frame, text="Alterar Senha", font=("Haveltica", 14)).place(x=280, y=130)
 
@@ -368,7 +370,10 @@ class GUI:
     self.master.geometry("700x400")
     self.usuario_screen()
     
-    lista = self.user.lista
+    try:
+      lista = self.user.lista
+    except:
+      lista = []
     self.atualizar_lista(self.lista_pessoal, lista)
     self.usuario_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -383,9 +388,11 @@ class GUI:
     self.master.geometry("700x420")
     self.admin_screen()
     
-    lista = self.user.lista
+    try:
+      lista = self.user.lista
+    except:
+      lista = []
     self.atualizar_lista(self.lista_pessoal, lista)
-
     self.admin_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -399,9 +406,12 @@ class GUI:
     self.master.geometry("700x500")
     self.adicionar_produto_screen()
 
-    lista = list(self.user.database.mostrar_produtos_cadastrados_da_residencia(self.user.residencia).values())
-    lista_existentes = [f"{produto['categoria']} -> {produto['nome']}" for produto in lista]
-    
+    try:
+      lista = list(self.user.database.mostrar_produtos_cadastrados_da_residencia(self.user.residencia).values())
+      lista_existentes = [f"{produto['categoria']} -> {produto['nome']}" for produto in lista]
+    except:
+      lista_existentes = []
+
     self.atualizar_lista(self.lista_produtos_existentes, lista_existentes)
     self.adicionar_produto_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -418,7 +428,7 @@ class GUI:
     
     try:
       lista = self.user.lista
-    except RuntimeError:
+    except:
       lista = []
     self.atualizar_lista(self.lista_modificar, lista)
 
@@ -435,11 +445,14 @@ class GUI:
     self.master.geometry("700x400")
     self.verificar_dividas_screen()
 
-    lista = self.user.dividas()
-    lista_dividas = []
-    for key, value in lista.items():
-      nome = self.user.database.buscar_usuario_por_id(key)['nome']
-      lista_dividas.append(f"{nome} ---> {value:.2f}")
+    try:
+      lista = self.user.dividas()
+      lista_dividas = []
+      for key, value in lista.items():
+        nome = self.user.database.buscar_usuario_por_id(key)['nome']
+        lista_dividas.append(f"{nome} ---> {value:.2f}")
+    except:
+      lista_dividas = []
     self.atualizar_lista(self.lista_dividas, lista_dividas)
 
     if self.user.residencia:
@@ -467,14 +480,17 @@ class GUI:
     self.master.geometry("700x400")
     self.verificar_dispensa_screen()
 
-    estoque = Dispensa.estoque(self.user.database, self.user.residencia)
-    itens_dispensa = {}
-    for key, value in estoque.items():
-      itens_dispensa[value] = Produto.get_info(self.user.database, key)['nome']
+    try:
+      estoque = Dispensa.estoque(self.user.database, self.user.residencia)
+      itens_dispensa = {}
+      for key, value in estoque.items():
+        itens_dispensa[value] = Produto.get_info(self.user.database, key)['nome']
 
-    del estoque
+      del estoque
+    except:
+      itens_dispensa = {}
+
     self.atualizar_lista(self.lista_dispensa, itens_dispensa)
-
     self.verificar_dispensa_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -488,15 +504,18 @@ class GUI:
     self.master.geometry("700x400")
     self.realizar_compra_screen()
 
-    lista = self.user.obter_listas_compra()
-    lista_produtos = {}
-    for key, value in lista.items():
-      if value > 0:
-        produto = Produto.get_info(self.user.database, key)
-        lista_produtos[produto['nome']] = value
-    del lista
-    self.atualizar_lista(self.lista_compras, lista_produtos)
+    try:
+      lista = self.user.obter_listas_compra()
+      lista_produtos = {}
+      for key, value in lista.items():
+        if value > 0:
+          produto = Produto.get_info(self.user.database, key)
+          lista_produtos[produto['nome']] = value
+      del lista
+    except:
+      lista_produtos = {}
 
+    self.atualizar_lista(self.lista_compras, lista_produtos)
     self.realizar_compra_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -510,12 +529,15 @@ class GUI:
     self.master.geometry("700x400")
     self.adicionar_morador_screen()
 
-    lista_moradores_ids = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
-    usuarios = {}
-    for morador in lista_moradores_ids:
-      if morador != self.user.id:
-        usuarios[morador] = self.user.database.buscar_usuario_por_id(morador)['nome']
-    
+    try:
+      lista_moradores_ids = Residencia.info_residencia(self.user.database, self.user.residencia)['moradores']
+      usuarios = {}
+      for morador in lista_moradores_ids:
+        if morador != self.user.id:
+          usuarios[morador] = self.user.database.buscar_usuario_por_id(morador)['nome']
+    except:
+      usuarios = {}
+
     self.atualizar_lista(self.lista_moradores, usuarios)
     self.adicionar_morador_frame.pack(fill=tk.BOTH, expand=True)
 
@@ -554,7 +576,11 @@ class GUI:
         self.user = Usuario.carregar_usuario(info, self.__db)
         tela = self.show_usuario
     except RuntimeError as erro:
-      messagebox.showerror("Erro", erro)  
+      messagebox.showerror("Erro", erro)
+      return None
+    except KeyError:
+      messagebox.showerror("ERRO", "Usuário não encontrado")  
+      return None
 
     if self.user.autenticar(username, password):
       tela() 
@@ -575,8 +601,10 @@ class GUI:
       
       try:
         Usuario.salvar_usuario(self.__db, name, email, senha)
+      
       except RuntimeError as erro:
         messagebox.showerror("Erro", erro)
+        return None
 
       self.show_login()
     else:
@@ -774,7 +802,7 @@ class GUI:
     
     selecao = self.lista_dividas.get(indice)
     valor = float(selecao.split('--->')[1])
-    if valor > 0:
+    if valor >= 0:
       del selecao
       del valor
       messagebox.showerror("ERRO", "Você não deve dinheiro para abrir uma quitação de divida")
@@ -878,6 +906,16 @@ class GUI:
       Residencia.excluir_residencia(self.user.database, self.user.residencia)
       messagebox.showinfo("Residencia excluída com sucesso", "A Residência foi excluída com sucesso, retornando a tela de login")
       self.show_login()
+  
+
+  def sair_da_residencia(self) -> None:
+    try:
+      if messagebox.askquestion("Confirmação", "Deseja sair dessa residência") == "yes":
+        Residencia.remover_morador(self.user.database, self.user.id)
+        messagebox.showinfo("Sucesso", "Você foi removido da residência")
+        self.show_login()
+    except RuntimeError:
+      messagebox.showerror("ERRO", "Não foi possível sair dessa residência")
 
 
 if __name__ == "__main__":
