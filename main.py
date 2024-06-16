@@ -1,7 +1,7 @@
 from scripts.GUI import GUI
 from scripts.Repository import Database, UserRepository
 
-senha_root = "senha"
+senha_root = "gpires10"
 
 def main():
   database = Database("localhost", "root", senha_root, "gerenciador_mercado")

@@ -21,49 +21,61 @@ class GUI:
     self.frames = []
     self.frame_anterior = None
 
+    """ Cores """
+    self.cor_botao = "#328032"
+    self.cor_botao_texto = "#FFFFFF"
+    self.cor_bg = "#C0C0C0"
+    self.cor_fg = "#000000"
+    self.cor_lista_bg = "#D3D3D3"
+    self.cor_lista_texto = "#000000"
+    self.cor_entrys = "#DCDCDC"
+    self.cor_entrys_texto = "#000000"
+
+
+
     """ Frames de Login """
-    self.login_frame = tk.Frame(self.master)
+    self.login_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.login_frame)
 
     """ Frames de Cadastro """
-    self.cadastro_frame = tk.Frame(self.master)
+    self.cadastro_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.cadastro_frame)
 
     """ Frames de Usuario """
-    self.usuario_frame = tk.Frame(self.master)
+    self.usuario_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.usuario_frame)
 
     """ Frame Administrador"""
-    self.admin_frame = tk.Frame(self.master)
+    self.admin_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.admin_frame)
 
     """ Adicionar Produto """
-    self.adicionar_produto_frame = tk.Frame(self.master)
+    self.adicionar_produto_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.adicionar_produto_frame)
 
     """ Modificar Lista """
-    self.modificar_lista_frame = tk.Frame(self.master)
+    self.modificar_lista_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.modificar_lista_frame)
 
     """ Verificar Dividas """
-    self.verificar_dividas_frame = tk.Frame(self.master)
+    self.verificar_dividas_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.verificar_dividas_frame)
 
     """ Verificar Dispensa """
-    self.verificar_dispensa_frame = tk.Frame(self.master)
+    self.verificar_dispensa_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.verificar_dispensa_frame)
 
     """ Realizar Compra """
-    self.realizar_compra_frame = tk.Frame(self.master)
+    self.realizar_compra_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.realizar_compra_frame)
     self.compras = {}
 
     """ Adicionar Morador """
-    self.adicionar_morador_frame = tk.Frame(self.master)
+    self.adicionar_morador_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.adicionar_morador_frame)
 
     """ Configurações """
-    self.config_frame = tk.Frame(self.master)
+    self.config_frame = tk.Frame(self.master, bg=self.cor_bg)
     self.frames.append(self.config_frame)
 
     self.show_login()
@@ -72,266 +84,266 @@ class GUI:
 
   def login_screen(self) -> None:
     """ Username """
-    tk.Label(self.login_frame, text="Email:").pack()
+    tk.Label(self.login_frame, text="Email:", bg=self.cor_bg, fg=self.cor_fg).pack()
     
-    self.entry_username = tk.Entry(self.login_frame)
+    self.entry_username = tk.Entry(self.login_frame, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_username.pack()
 
     """ Password """
-    tk.Label(self.login_frame, text="Senha:").pack()
+    tk.Label(self.login_frame, text="Senha:", bg=self.cor_bg, fg=self.cor_fg).pack()
     
-    self.entry_password = tk.Entry(self.login_frame, show="*")
+    self.entry_password = tk.Entry(self.login_frame, show="*", bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_password.pack()
 
     """ Botão Login """
-    tk.Button(self.login_frame, text="Login", command=self.efetuar_login).pack(pady=10)
+    tk.Button(self.login_frame, text="Login", bg=self.cor_botao, fg=self.cor_botao_texto, command=self.efetuar_login).pack(pady=10)
 
     """ Botão Cadastro """
-    tk.Button(self.login_frame, text="Cadastro", command=self.show_cadastro).pack()
+    tk.Button(self.login_frame, text="Cadastro", bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_cadastro).pack()
 
 
   def cadastro_screen(self) -> None:
     """ Nome """
-    tk.Label(self.cadastro_frame, text="Nome:").pack()
+    tk.Label(self.cadastro_frame, text="Nome:", bg=self.cor_bg, fg=self.cor_fg).pack()
     
-    self.entry_name = tk.Entry(self.cadastro_frame)
+    self.entry_name = tk.Entry(self.cadastro_frame, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_name.pack()
 
     """ Email """
-    tk.Label(self.cadastro_frame, text="Email").pack()
+    tk.Label(self.cadastro_frame, text="Email", bg=self.cor_bg, fg=self.cor_fg).pack()
     
-    self.entry_email = tk.Entry(self.cadastro_frame)
+    self.entry_email = tk.Entry(self.cadastro_frame, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_email.pack()
 
     """" Senha """
-    tk.Label(self.cadastro_frame, text="Insira a Senha").pack()
+    tk.Label(self.cadastro_frame, text="Insira a Senha", bg=self.cor_bg, fg=self.cor_fg).pack()
 
-    self.entry_senha = tk.Entry(self.cadastro_frame, show="*")
+    self.entry_senha = tk.Entry(self.cadastro_frame, show="*", bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_senha.pack()
 
     """ Confirmar Senha """
-    tk.Label(self.cadastro_frame, text="Confirme a Senha").pack()
+    tk.Label(self.cadastro_frame, text="Confirme a Senha", bg=self.cor_bg, fg=self.cor_fg).pack()
     
-    self.entry_confirmar_senha = tk.Entry(self.cadastro_frame, show="*")
+    self.entry_confirmar_senha = tk.Entry(self.cadastro_frame, show="*", bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.entry_confirmar_senha.pack()
 
     """ Botão de confirmação """
-    tk.Button(self.cadastro_frame, text="Confirmar Cadastro", command=self.confirmar_cadastro).pack(pady=10)
+    tk.Button(self.cadastro_frame, text="Confirmar Cadastro", bg=self.cor_botao, fg=self.cor_botao_texto, command=self.confirmar_cadastro).pack(pady=10)
 
 
   def usuario_screen(self) -> None:
     self.frame_anterior = self.show_usuario
     
     """ Bem Vindo """
-    tk.Label(self.usuario_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
+    tk.Label(self.usuario_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
-    tk.Button(self.usuario_frame, text="Verificar Dividas",  width=12, height=4, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=5)
-    tk.Button(self.usuario_frame, text="Realizar Compra",    width=12, height=4, command=self.show_realizar_compra    ).pack(anchor=tk.W, padx=5, pady=5)
-    tk.Button(self.usuario_frame, text="Verificar Dispensa", width=12, height=4, command=self.show_verificar_dispensa ).pack(anchor=tk.W, padx=5, pady=5)
-    tk.Button(self.usuario_frame, text="Configurações",      width=12, height=4, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=5)
+    tk.Button(self.usuario_frame, text="Verificar Dividas",  width=12, height=4, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=5)
+    tk.Button(self.usuario_frame, text="Realizar Compra",    width=12, height=4, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_realizar_compra    ).pack(anchor=tk.W, padx=5, pady=5)
+    tk.Button(self.usuario_frame, text="Verificar Dispensa", width=12, height=4, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dispensa ).pack(anchor=tk.W, padx=5, pady=5)
+    tk.Button(self.usuario_frame, text="Configurações",      width=12, height=4, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=5)
 
     """ Lista de Compras """
-    tk.Label(self.usuario_frame, text="Lista de Compras").place(x=525, y=55)
+    tk.Label(self.usuario_frame, text="Lista de Compras", bg=self.cor_bg, fg=self.cor_fg).place(x=525, y=55)
 
-    self.lista_pessoal = tk.Listbox(self.usuario_frame, width=22, height=16, bg="light grey", font=("Times new Roman", 10))
+    self.lista_pessoal = tk.Listbox(self.usuario_frame, width=22, height=16, font=("Times new Roman", 10), bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_pessoal.place(x=505, y=80)
 
     """ Botão de Modfiicar Lista """
-    tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, command=self.show_modificar_lista).place(x=500, y=350)
+    tk.Button(self.usuario_frame, text="Modificar Lista", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_modificar_lista).place(x=500, y=350)
 
     """ Sair """
-    tk.Button(self.usuario_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
+    tk.Button(self.usuario_frame, text="Sair", width=5, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_login).place(x=10, y=5)
 
 
   def admin_screen(self) -> None:
     self.frame_anterior = self.show_admin
     
     """ Bem Vindo """
-    tk.Label(self.admin_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16)).pack(side=tk.TOP, pady=10)
+    tk.Label(self.admin_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
-    tk.Button(self.admin_frame, text="Verificar Dividas",  width=12, height=3, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=4)
-    tk.Button(self.admin_frame, text="Realizar Compra",    width=12, height=3, command=self.show_realizar_compra    ).pack(anchor=tk.W, padx=5, pady=4)
-    tk.Button(self.admin_frame, text="Verificar Dispensa", width=12, height=3, command=self.show_verificar_dispensa ).pack(anchor=tk.W, padx=5, pady=4)
-    tk.Button(self.admin_frame, text="Adicionar Morador",  width=12, height=3, command=self.show_adicionar_morador  ).pack(anchor=tk.W, padx=5, pady=4)
-    tk.Button(self.admin_frame, text="Configurações",      width=12, height=3, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=4)
+    tk.Button(self.admin_frame, text="Verificar Dividas",  width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=4)
+    tk.Button(self.admin_frame, text="Realizar Compra",    width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_realizar_compra    ).pack(anchor=tk.W, padx=5, pady=4)
+    tk.Button(self.admin_frame, text="Verificar Dispensa", width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dispensa ).pack(anchor=tk.W, padx=5, pady=4)
+    tk.Button(self.admin_frame, text="Adicionar Morador",  width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_adicionar_morador  ).pack(anchor=tk.W, padx=5, pady=4)
+    tk.Button(self.admin_frame, text="Configurações",      width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_config             ).pack(anchor=tk.W, padx=5, pady=4)
 
     """ Lista de Compras Pessoal """
-    self.lista_pessoal = tk.Listbox(self.admin_frame, width=22, height=17, bg="light grey", font=("Times new Roman", 10))
+    self.lista_pessoal = tk.Listbox(self.admin_frame, width=22, height=17, font=("Times new Roman", 10), bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_pessoal.place(x=530, y=80)
 
     """ Botão de Modfiicar Lista Pessoal """
-    tk.Label(self.admin_frame, text="Lista Pessoal").place(x=565, y=55)
-    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1, command=self.show_modificar_lista).place(x=525, y=370)
+    tk.Label(self.admin_frame, text="Lista Pessoal", bg=self.cor_bg, fg=self.cor_fg).place(x=565, y=55)
+    tk.Button(self.admin_frame, text="Modificar Pessoal", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_modificar_lista).place(x=525, y=370)
 
     """ Sair """
-    tk.Button(self.admin_frame, text="Sair", width=5, height=1, command=self.show_login).place(x=10, y=5)
+    tk.Button(self.admin_frame, text="Sair", width=5, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_login).place(x=10, y=5)
 
 
   def adicionar_produto_screen(self) -> None:
-    tk.Label(self.adicionar_produto_frame, text="Adicionar Produto", font=("", 15)).pack(side=tk.TOP)
+    tk.Label(self.adicionar_produto_frame, text="Adicionar Produto", font=("", 15), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP)
     
     """ Produto Existente """
-    tk.Label(self.adicionar_produto_frame, text="Produtos Existentes", font=("", 12)).place(x=15, y=50)
+    tk.Label(self.adicionar_produto_frame, text="Produtos Existentes", font=("", 12), bg=self.cor_bg, fg=self.cor_fg).place(x=15, y=50)
 
-    self.lista_produtos_existentes = tk.Listbox(self.adicionar_produto_frame, width=20, height=10)
+    self.lista_produtos_existentes = tk.Listbox(self.adicionar_produto_frame, width=20, height=10, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_produtos_existentes.place(x=15, y=80)
 
-    tk.Label(self.adicionar_produto_frame, text="Quantidade").place(x=225, y=245)
+    tk.Label(self.adicionar_produto_frame, text="Quantidade", bg=self.cor_bg, fg=self.cor_fg).place(x=225, y=245)
 
-    self.quantidade_produto_existente = tk.Entry(self.adicionar_produto_frame, width=5)
+    self.quantidade_produto_existente = tk.Entry(self.adicionar_produto_frame, width=5, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.quantidade_produto_existente.place(x=310, y=242)
 
-    tk.Button(self.adicionar_produto_frame, text="Adicionar Produto Existente", width=19, height=1, command=self.adicionar_produto_existente).place(x=500, y=242)
+    tk.Button(self.adicionar_produto_frame, text="Adicionar Produto Existente", width=19, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.adicionar_produto_existente).place(x=500, y=242)
 
     """ Novo Produto """
-    tk.Label(self.adicionar_produto_frame, text="Novo Produto", font=("", 15)).place(x=280, y=310)
+    tk.Label(self.adicionar_produto_frame, text="Novo Produto", font=("", 15), bg=self.cor_bg, fg=self.cor_fg).place(x=280, y=310)
     
-    tk.Label(self.adicionar_produto_frame, text="Nome do Produto").place(x=10, y=370)
+    tk.Label(self.adicionar_produto_frame, text="Nome do Produto", bg=self.cor_bg, fg=self.cor_fg).place(x=10, y=370)
     
-    self.nome_novo_produto = tk.Entry(self.adicionar_produto_frame, width=15)
+    self.nome_novo_produto = tk.Entry(self.adicionar_produto_frame, width=15, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.nome_novo_produto.place(x=130, y=368)
 
-    tk.Label(self.adicionar_produto_frame, text="Tipo").place(x=285, y=370)
+    tk.Label(self.adicionar_produto_frame, text="Tipo", bg=self.cor_bg, fg=self.cor_fg).place(x=285, y=370)
     
-    self.tipo_novo_produto = tk.Entry(self.adicionar_produto_frame, width=10)
+    self.tipo_novo_produto = tk.Entry(self.adicionar_produto_frame, width=10, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.tipo_novo_produto.place(x=330, y=368)
 
-    tk.Label(self.adicionar_produto_frame, text="Quantidade").place(x=440, y=370)
+    tk.Label(self.adicionar_produto_frame, text="Quantidade", bg=self.cor_bg, fg=self.cor_fg).place(x=440, y=370)
 
-    self.quantidade_novo_produto = tk.Entry(self.adicionar_produto_frame, width=5)
+    self.quantidade_novo_produto = tk.Entry(self.adicionar_produto_frame, width=5, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.quantidade_novo_produto.place(x=525, y=368)
 
-    tk.Button(self.adicionar_produto_frame, text="Adicionar novo produto", width=19, height=1, command=self.adicionar_novo_produto).place(x=500, y=410)
+    tk.Button(self.adicionar_produto_frame, text="Adicionar novo produto", width=19, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.adicionar_novo_produto).place(x=500, y=410)
 
     """ Botão Confirmação """
-    tk.Button(self.adicionar_produto_frame, text="Confirmar", width=20, height=1, command=self.frame_anterior).place(x=240, y=470)
+    tk.Button(self.adicionar_produto_frame, text="Confirmar", width=20, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=240, y=470)
 
 
   def modificar_lista_screen(self) -> None:
-    tk.Label(self.modificar_lista_frame, text="Alteração Lista", font=("", 15)).pack(side=tk.TOP)
+    tk.Label(self.modificar_lista_frame, text="Alteração Lista", font=("", 15), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP)
 
     """ Lista """
-    self.lista_modificar = tk.Listbox(self.modificar_lista_frame, width=40, height=12)
+    self.lista_modificar = tk.Listbox(self.modificar_lista_frame, width=40, height=12, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_modificar.place(x=120, y=40)
 
     """ Quantidade a remover """
-    tk.Label(self.modificar_lista_frame, text="Quantidade (0: excluir)").place(x=120, y=270)
+    tk.Label(self.modificar_lista_frame, text="Quantidade (0: excluir)", bg=self.cor_bg, fg=self.cor_fg).place(x=120, y=270)
     
-    self.quantidade_remover = tk.Entry(self.modificar_lista_frame, width=5)
+    self.quantidade_remover = tk.Entry(self.modificar_lista_frame, width=5, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.quantidade_remover.place(x=300, y=270)
 
-    tk.Button(self.modificar_lista_frame, text="Remover", width=5, height=1, command=self.remover_item_lista).place(x=380, y=265)
+    tk.Button(self.modificar_lista_frame, text="Remover", width=5, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.remover_item_lista).place(x=380, y=265)
 
     """ Adicionar Produto """
-    tk.Button(self.modificar_lista_frame, text="Adicionar Produto", width=20, height=2, command=self.show_adicionar_produto).place(x=200, y=340)
+    tk.Button(self.modificar_lista_frame, text="Adicionar Produto", width=20, height=2, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_adicionar_produto).place(x=200, y=340)
 
     """ Confirmar Alterações """
-    tk.Button(self.modificar_lista_frame, text="Confirmar Alterações", width=20, height=2, command=self.frame_anterior).place(x=200, y=400)
+    tk.Button(self.modificar_lista_frame, text="Confirmar Alterações", width=20, height=2, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=200, y=400)
 
 
   def verificar_dividas_screen(self) -> None:
-    tk.Label(self.verificar_dividas_frame, text="Divídas", font=("Haveltica", 16)).place(x=300, y=10)
+    tk.Label(self.verificar_dividas_frame, text="Divídas", font=("Haveltica", 16), bg=self.cor_bg, fg=self.cor_fg).place(x=300, y=10)
 
-    self.lista_dividas = tk.Listbox(self.verificar_dividas_frame, width=28, height=15)
+    self.lista_dividas = tk.Listbox(self.verificar_dividas_frame, width=28, height=15, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_dividas.place(x=50, y=50)
 
-    tk.Button(self.verificar_dividas_frame, text="Quitar Divída", width=12, height=1, command=self.quitar_divida).place(x=330, y=295)
+    tk.Button(self.verificar_dividas_frame, text="Quitar Divída", width=12, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.quitar_divida).place(x=330, y=295)
 
-    self.lista_pendentes = tk.Listbox(self.verificar_dividas_frame, width=25, height=4)
+    self.lista_pendentes = tk.Listbox(self.verificar_dividas_frame, width=25, height=4, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_pendentes.place(x=420, y=50)
 
-    tk.Button(self.verificar_dividas_frame, text="Confirmar Quitação", width=15, height=1, command=self.confirmar_quitacao).place(x=450, y=135)
+    tk.Button(self.verificar_dividas_frame, text="Confirmar Quitação", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.confirmar_quitacao).place(x=450, y=135)
     
-    tk.Button(self.verificar_dividas_frame, text="Confirmar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
+    tk.Button(self.verificar_dividas_frame, text="Confirmar", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=270, y=350)
 
 
   def verificar_dispensa_screen(self) -> None:
-    tk.Label(self.verificar_dispensa_frame, text="Dispensa", font=("Haveltica", 16)).place(x=300, y=10)
+    tk.Label(self.verificar_dispensa_frame, text="Dispensa", font=("Haveltica", 16), bg=self.cor_bg, fg=self.cor_fg).place(x=300, y=10)
 
-    self.lista_dispensa = tk.Listbox(self.verificar_dispensa_frame, width=28, height=15)
+    self.lista_dispensa = tk.Listbox(self.verificar_dispensa_frame, width=28, height=15, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_dispensa.place(x=225, y=50)
 
-    tk.Button(self.verificar_dispensa_frame, text="+", font=("", 16), width=1, height=1, command=self.aumentar_item_dipensa ).place(x=520, y=290)
-    tk.Button(self.verificar_dispensa_frame, text="-", font=("", 16), width=1, height=1, command=self.diminuir_item_dispensa).place(x=570, y=290)
+    tk.Button(self.verificar_dispensa_frame, text="+", font=("", 16), width=1, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.aumentar_item_dipensa ).place(x=520, y=290)
+    tk.Button(self.verificar_dispensa_frame, text="-", font=("", 16), width=1, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.diminuir_item_dispensa).place(x=570, y=290)
 
-    tk.Button(self.verificar_dispensa_frame, text="Retornar", width=15, height=1, command=self.frame_anterior).place(x=270, y=350)
+    tk.Button(self.verificar_dispensa_frame, text="Retornar", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=270, y=350)
 
 
   def realizar_compra_screen(self) -> None:
-    tk.Label(self.realizar_compra_frame, text="Realizar Compra", font=("Haveltica", 16)).pack(side=tk.TOP)
+    tk.Label(self.realizar_compra_frame, text="Realizar Compra", font=("Haveltica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP)
     
-    self.lista_compras = tk.Listbox(self.realizar_compra_frame, width=18, height=18)
+    self.lista_compras = tk.Listbox(self.realizar_compra_frame, width=18, height=18, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_compras.place(x=15, y=25)
 
-    tk.Label(self.realizar_compra_frame, text="Quantidade Comprada", font=("Haveltica", 11)).place(x=220, y=70)
-    self.quantidade_comprada = tk.Entry(self.realizar_compra_frame, width=8)
+    tk.Label(self.realizar_compra_frame, text="Quantidade Comprada", font=("Haveltica", 11), bg=self.cor_bg, fg=self.cor_fg).place(x=220, y=70)
+    self.quantidade_comprada = tk.Entry(self.realizar_compra_frame, width=8, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.quantidade_comprada.place(x=400, y=68)
 
-    tk.Label(self.realizar_compra_frame, text="Valor Total do Produto", font=("Haveltica", 11)).place(x=220, y=110)
-    self.valor_compra_produto = tk.Entry(self.realizar_compra_frame, width=8)
+    tk.Label(self.realizar_compra_frame, text="Valor Total do Produto", font=("Haveltica", 11), bg=self.cor_bg, fg=self.cor_fg).place(x=220, y=110)
+    self.valor_compra_produto = tk.Entry(self.realizar_compra_frame, width=8, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.valor_compra_produto.place(x=400, y=108)
 
-    self.lista_compras_inseridas = tk.Listbox(self.realizar_compra_frame, width=18, height=6)
+    self.lista_compras_inseridas = tk.Listbox(self.realizar_compra_frame, width=18, height=6, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_compras_inseridas.place(x=500, y=200)
 
-    tk.Button(self.realizar_compra_frame, text="Adicionar Produto a Compra", width=20, height=1, command=self.adicionar_produto_compra).place(x=260, y=150)
+    tk.Button(self.realizar_compra_frame, text="Adicionar Produto a Compra", width=20, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.adicionar_produto_compra).place(x=260, y=150)
     
-    tk.Button(self.realizar_compra_frame, text="Confirmar", width=15, height=1, command=self.confirmar_compra).place(x=270, y=350)
+    tk.Button(self.realizar_compra_frame, text="Confirmar", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.confirmar_compra).place(x=270, y=350)
 
 
   def adicionar_morador_screen(self) -> None:
     """ Remover Morador """
-    tk.Label(self.adicionar_morador_frame, text="Remover Morador", font=("Haveltica", 15)).pack(side=tk.TOP)
+    tk.Label(self.adicionar_morador_frame, text="Remover Morador", font=("Haveltica", 15), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP)
 
-    self.lista_moradores = tk.Listbox(self.adicionar_morador_frame, width=25, height=10)
+    self.lista_moradores = tk.Listbox(self.adicionar_morador_frame, width=25, height=10, bg=self.cor_lista_bg, fg=self.cor_lista_texto)
     self.lista_moradores.place(x=40, y=40)
 
-    tk.Button(self.adicionar_morador_frame, text="Remover Morador", width=20, height=1, command=self.remover_morador).place(x=300, y=190)
+    tk.Button(self.adicionar_morador_frame, text="Remover Morador", width=20, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.remover_morador).place(x=300, y=190)
 
     """ Adicionar Morador """
-    tk.Label(self.adicionar_morador_frame, text="Adicionar Morador", font=("Haveltica", 15)).place(x=255, y=240)
+    tk.Label(self.adicionar_morador_frame, text="Adicionar Morador", font=("Haveltica", 15), bg=self.cor_bg, fg=self.cor_fg).place(x=255, y=240)
 
-    tk.Label(self.adicionar_morador_frame, text="ID do Usuário").place(x=40, y=290)
+    tk.Label(self.adicionar_morador_frame, text="ID do Usuário", bg=self.cor_bg, fg=self.cor_fg).place(x=40, y=290)
 
-    self.id_morador = tk.Entry(self.adicionar_morador_frame, width=10)
+    self.id_morador = tk.Entry(self.adicionar_morador_frame, width=10, bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.id_morador.place(x=140, y=287)
 
-    tk.Button(self.adicionar_morador_frame, text="Adicionar Morador", width=15, height=1, command=self.adicionar_morador).place(x=300, y=280)
+    tk.Button(self.adicionar_morador_frame, text="Adicionar Morador", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.adicionar_morador).place(x=300, y=280)
 
-    tk.Button(self.adicionar_morador_frame, text="Confirmar", width=20, height=2, command=self.frame_anterior).place(x=250, y=350)
+    tk.Button(self.adicionar_morador_frame, text="Confirmar", width=20, height=2, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=250, y=350)
 
 
   def config_screen(self) -> None:
-    tk.Label(self.config_frame, text="Informaçoes de Usuário", font=("Haveltica", 15)).pack(side=tk.TOP)
+    tk.Label(self.config_frame, text="Informaçoes de Usuário", font=("Haveltica", 15), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP)
 
-    tk.Label(self.config_frame, text=f"ID: {self.user.id}", font=("Haveltica", 12)).place(x=15, y=25)
+    tk.Label(self.config_frame, text=f"ID: {self.user.id}", font=("Haveltica", 12), bg=self.cor_bg, fg=self.cor_fg).place(x=15, y=25)
 
-    tk.Label(self.config_frame, text=f"Email: {self.user.email}", font=("Haveltica", 12)).place(x=15, y=55)
+    tk.Label(self.config_frame, text=f"Email: {self.user.email}", font=("Haveltica", 12), bg=self.cor_bg, fg=self.cor_fg).place(x=15, y=55)
 
-    tk.Label(self.config_frame, text=f"ID_Residência: {self.user.residencia}", font=("Haveltica", 12)).place(x=15, y=85)
+    tk.Label(self.config_frame, text=f"ID_Residência: {self.user.residencia}", font=("Haveltica", 12), bg=self.cor_bg, fg=self.cor_fg).place(x=15, y=85)
 
     if isinstance(self.user, Administrador):
-      tk.Button(self.config_frame, text="Excluir Residencia", width=14, height=1, command=self.excluir_residencia).place(x=530, y=35)
+      tk.Button(self.config_frame, text="Excluir Residencia", width=14, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.excluir_residencia).place(x=530, y=35)
     elif isinstance(self.user, Usuario):
-      tk.Button(self.config_frame, text="Criar Residencia", width=14, height=1, command=self.criar_residencia).place(x=530, y=35)
+      tk.Button(self.config_frame, text="Criar Residencia", width=14, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.criar_residencia).place(x=530, y=35)
       if self.user.residencia:
-        tk.Button(self.config_frame, text="Sair da Residencia", width=14, height=1, command=self.sair_da_residencia).place(x=530, y=75)
+        tk.Button(self.config_frame, text="Sair da Residencia", width=14, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.sair_da_residencia).place(x=530, y=75)
 
-    tk.Label(self.config_frame, text="Alterar Senha", font=("Haveltica", 14)).place(x=280, y=130)
+    tk.Label(self.config_frame, text="Alterar Senha", font=("Haveltica", 14), bg=self.cor_bg, fg=self.cor_fg).place(x=280, y=130)
 
     tk.Label(self.config_frame, text="Senha Atual").place(x=15, y=180)
     tk.Label(self.config_frame, text="Nova Senha").place(x=15, y=230)
 
-    self.config_senha_atual = tk.Entry(self.config_frame, width=20, show="*")
+    self.config_senha_atual = tk.Entry(self.config_frame, width=20, show="*", bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.config_senha_atual.place(x=120, y=177)
-    self.config_nova_senha = tk.Entry(self.config_frame, width=20, show="*")
+    self.config_nova_senha = tk.Entry(self.config_frame, width=20, show="*", bg=self.cor_entrys, fg=self.cor_entrys_texto)
     self.config_nova_senha.place(x=120, y=227)
 
-    tk.Button(self.config_frame, text="Alterar Senha", width=12, command=self.alterar_senha).place(x=280, y=270)
+    tk.Button(self.config_frame, text="Alterar Senha", width=12, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.alterar_senha).place(x=280, y=270)
 
-    tk.Button(self.config_frame, text="Confirmar", command=self.frame_anterior, width=15, height=2).place(x=265, y=340)
+    tk.Button(self.config_frame, text="Confirmar", bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior, width=15, height=2).place(x=265, y=340)
     
 
   """ Carregar Frames """

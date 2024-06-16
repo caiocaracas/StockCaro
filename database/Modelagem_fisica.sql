@@ -61,28 +61,6 @@ AUTO_INCREMENT = 1000
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
-
--- -----------------------------------------------------
--- Table `gerenciador_mercado`.`compras`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `gerenciador_mercado`.`compras` (
-  `id_compra` INT NOT NULL AUTO_INCREMENT,
-  `data_compra` DATETIME NULL DEFAULT NULL,
-  `supermercado` VARCHAR(30) NULL DEFAULT NULL,
-  `usuario_id` INT NOT NULL,
-  PRIMARY KEY (`id_compra`),
-  INDEX `fk_compras_usuarios1_idx` (`usuario_id` ASC) VISIBLE,
-  CONSTRAINT `fk_compras_usuarios1`
-    FOREIGN KEY (`usuario_id`)
-    REFERENCES `gerenciador_mercado`.`usuarios` (`id_usuario`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 3000
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
 -- -----------------------------------------------------
 -- Table `gerenciador_mercado`.`produtos_residencia`
 -- -----------------------------------------------------
@@ -104,34 +82,6 @@ CREATE TABLE IF NOT EXISTS `gerenciador_mercado`.`produtos_residencia` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB
 AUTO_INCREMENT = 4000
-DEFAULT CHARACTER SET = utf8mb4
-COLLATE = utf8mb4_0900_ai_ci;
-
-
--- -----------------------------------------------------
--- Table `gerenciador_mercado`.`produtos_comprados`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `gerenciador_mercado`.`produtos_comprados` (
-  `id_produto_comprado` INT NOT NULL AUTO_INCREMENT,
-  `preco` FLOAT NULL DEFAULT NULL,
-  `quantidade_comprada` INT NOT NULL,
-  `produto_residencia_id` INT NOT NULL,
-  `compra_id` INT NOT NULL,
-  PRIMARY KEY (`id_produto_comprado`),
-  INDEX `fk_produtos_comprados_produtos_residencia1_idx` (`produto_residencia_id` ASC) VISIBLE,
-  INDEX `fk_produtos_comprados_compras1_idx` (`compra_id` ASC) VISIBLE,
-  CONSTRAINT `fk_produtos_comprados_compras1`
-    FOREIGN KEY (`compra_id`)
-    REFERENCES `gerenciador_mercado`.`compras` (`id_compra`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT `fk_produtos_comprados_produtos_residencia1`
-    FOREIGN KEY (`produto_residencia_id`)
-    REFERENCES `gerenciador_mercado`.`produtos_residencia` (`id_produto_residencia`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 5000
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
