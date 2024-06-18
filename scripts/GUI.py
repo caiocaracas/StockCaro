@@ -22,15 +22,14 @@ class GUI:
     self.frame_anterior = None
 
     """ Cores """
-    self.cor_botao = "#328032"
+    self.cor_botao = "#0a4d9c"
     self.cor_botao_texto = "#FFFFFF"
-    self.cor_bg = "#C0C0C0"
+    self.cor_bg = "#dcddde"
     self.cor_fg = "#000000"
     self.cor_lista_bg = "#D3D3D3"
     self.cor_lista_texto = "#000000"
     self.cor_entrys = "#DCDCDC"
     self.cor_entrys_texto = "#000000"
-
 
 
     """ Frames de Login """
@@ -135,7 +134,7 @@ class GUI:
     self.frame_anterior = self.show_usuario
     
     """ Bem Vindo """
-    tk.Label(self.usuario_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
+    tk.Label(self.usuario_frame, text=f"Bem-Vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
     tk.Button(self.usuario_frame, text="Verificar Dividas",  width=12, height=4, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=5)
@@ -160,7 +159,7 @@ class GUI:
     self.frame_anterior = self.show_admin
     
     """ Bem Vindo """
-    tk.Label(self.admin_frame, text=f"Bem vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
+    tk.Label(self.admin_frame, text=f"Bem-Vindo, {self.user.nome}", font=("Helvetica", 16), bg=self.cor_bg, fg=self.cor_fg).pack(side=tk.TOP, pady=10)
 
     """ Botões a esquerda """
     tk.Button(self.admin_frame, text="Verificar Dividas",  width=12, height=3, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.show_verificar_dividas  ).pack(anchor=tk.W, padx=5, pady=4)
@@ -218,7 +217,7 @@ class GUI:
     tk.Button(self.adicionar_produto_frame, text="Adicionar novo produto", width=19, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.adicionar_novo_produto).place(x=500, y=410)
 
     """ Botão Confirmação """
-    tk.Button(self.adicionar_produto_frame, text="Confirmar", width=20, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=240, y=470)
+    tk.Button(self.adicionar_produto_frame, text="Retornar", width=20, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=240, y=470)
 
 
   def modificar_lista_screen(self) -> None:
@@ -256,7 +255,7 @@ class GUI:
 
     tk.Button(self.verificar_dividas_frame, text="Confirmar Quitação", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.confirmar_quitacao).place(x=450, y=135)
     
-    tk.Button(self.verificar_dividas_frame, text="Confirmar", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=270, y=350)
+    tk.Button(self.verificar_dividas_frame, text="Retornar", width=15, height=1, bg=self.cor_botao, fg=self.cor_botao_texto, command=self.frame_anterior).place(x=270, y=350)
 
 
   def verificar_dispensa_screen(self) -> None:
@@ -492,17 +491,16 @@ class GUI:
     self.master.geometry("700x400")
     self.verificar_dispensa_screen()
 
+    self.lista_dispensa.delete(0, tk.END)
     try:
       estoque = Dispensa.estoque(self.user.database, self.user.residencia)
-      itens_dispensa = {}
-      for key, value in estoque.items():
-        itens_dispensa[value] = Produto.get_info(self.user.database, key)['nome']
-
-      del estoque
+      for id, quantidade in estoque.items():
+        nome = Produto.get_info(self.user.database, id)['nome']
+        produto = f"{nome} --> {quantidade}"
+        self.lista_dispensa.insert(tk.END, produto)
     except:
-      itens_dispensa = {}
+      pass
 
-    self.atualizar_lista(self.lista_dispensa, itens_dispensa)
     self.verificar_dispensa_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -516,18 +514,18 @@ class GUI:
     self.master.geometry("700x400")
     self.realizar_compra_screen()
 
+    self.lista_compras.delete(0, tk.END)
+    self.lista_compras_inseridas.delete(0, tk.END)
     try:
       lista = self.user.obter_listas_compra()
-      lista_produtos = {}
-      for key, value in lista.items():
-        if value > 0:
-          produto = Produto.get_info(self.user.database, key)
-          lista_produtos[produto['nome']] = value
-      del lista
+      for id, quantidade in lista.items():
+        if quantidade > 0:
+          nome = Produto.get_info(self.user.database, id)['nome']
+          produto = f"{nome} --> {quantidade}"
+          self.lista_compras.insert(tk.END, produto)
     except:
-      lista_produtos = {}
+      pass
 
-    self.atualizar_lista(self.lista_compras, lista_produtos)
     self.realizar_compra_frame.pack(fill=tk.BOTH, expand=True)
 
 
@@ -795,7 +793,7 @@ class GUI:
       messagebox.showerror("Valor inválido", "ID é um numero inteiro")
 
     try:
-      if messagebox.askquestion("Adicionar morador", f"Deseka adicionar o morador de id {novo_morador_id} a residencia") == "yes":
+      if messagebox.askquestion("Adicionar morador", f"Deseja adicionar o morador de id {novo_morador_id} a residencia") == "yes":
         info_morador = self.user.database.buscar_usuario_por_id(novo_morador_id)
         if not info_morador['residencia_id']:
           self.user.adicionar_morador(novo_morador_id)
@@ -871,18 +869,23 @@ class GUI:
       messagebox.showerror("Valores Inválidos", "Valores preenchidos inválidos")
       return None
     
-    lista_produtos = list(self.user.obter_listas_compra().keys())
+    lista_produtos = []
+    try:
+      lista_compras = self.user.obter_listas_compra()
+      for key, value in lista_compras.items():
+        if value > 0:
+          lista_produtos.append(key)
+    except:
+      pass
+    
     nova_compra = {'quantidade': quantidade, 'valor': valor}
     
     self.compras[lista_produtos[indice]] = nova_compra
     
-    lista = []
-    for key in list(self.compras.keys()):
-      produto = Produto.get_info(self.user.database, key)['nome']
-      lista.append(f"{quantidade} x {produto} ---> {valor}")
-    
-    self.atualizar_lista(self.lista_compras_inseridas, lista)
-    del lista
+    self.lista_compras_inseridas.delete(0, tk.END)
+    for id, info in self.compras.items():
+      produto = Produto.get_info(self.user.database, id)['nome']
+      self.lista_compras_inseridas.insert(tk.END, f"{info['quantidade']} x {produto} --> {info['valor']}")
 
 
   def confirmar_compra(self) -> None:
